@@ -36,10 +36,17 @@ auth.post("/signup", async (c) => {
             socialLinks: validInput.data.socialLinks,
           },
         });
-        const token = generateAccessToken(
+        const token = await generateAccessToken(
           user.id.toString(),
           user.email,
           c.env.JWT_SECRET,
+        );
+        return c.json(
+          {
+            msg: "new user signup successfully",
+            Authorization: token,
+          },
+          201,
         );
       }
     }
