@@ -15,6 +15,8 @@ model user {
   bio         String?
   socialLinks String?
   posts       post[]
+  comment     comment[]
+  likes       like[]
 }
 
 model post {
@@ -29,6 +31,8 @@ model post {
   updatedAt DateTime  @updatedAt
   comments  comment[]
   likes     like[]
+  aiTweet   aiTweet[]
+  slug      String  @unique
 }
 
 model comment {
@@ -36,12 +40,38 @@ model comment {
   text      String
   post      post     @relation(fields: [postId], references: [id])
   postId    Int
+  authorId  Int
+  author    user @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
+
 }
 
 model like {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   post      post     @relation(fields: [postId], references: [id])
-  postId    Int
+  postId    Int 
+  authorId  Int 
+  author user @relation(fields: [authorId], references: [id]) 
+  @@unique([postId,authorId])
 }
+
+model newsHeadline {
+id Int @id @default(autoincrement())
+text String
+url String
+title String
+aiHeadings Json
+score Int
+createdAt DateTime @default(now())
+}
+
+model aiTweet{
+  id Int @id @default(autoincrement())
+  tweet String
+  createdAt DateTime @default(now())
+  postId Int 
+  author post @relation(fields: [postId], references: [id])
+
+}
+

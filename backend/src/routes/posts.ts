@@ -17,18 +17,19 @@ posts.post("/posts/create", async (c) => {
   const body = await c.req.json();
   const userId = c.get("userId");
 
-  const validInput = PostSchema.safeParse(body);
+  const validInputdata = PostSchema.safeParse(body);
 
-  if (validInput.error) {
+  if (validInputdata.error) {
     return c.json({
       msg: "invalid data input",
     });
   } else {
     const getuserPosts = await prisma.post.create({
       data: {
-        title: validInput.data.title,
-        content: validInput.data?.content,
+        title: validInputdata.data.title,
+        content: validInputdata.data?.content,
         authorId: Number(userId),
+        published: true,
       },
     });
     return c.json({
@@ -39,8 +40,130 @@ posts.post("/posts/create", async (c) => {
   }
 });
 
-posts.get("/post", async (c) => {
+posts.get("/posts", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = c.get("userId");
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: Number(userId),
+      },
+      select: {
+        published: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+    return c.json({ msg: { posts } });
+  } catch (error) {
+    console.error("couldn't find the posts for you:", error);
+  }
+});
 
+posts.patch("/edit/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+  const body = await c.req.json();
+  const validInputdata = PostSchema.safeParse(body);
+
+  if (!validInputdata.success) return c.json({ msg: "Invalid input" }, 400);
+  else {
+    try {
+      const findpost = await prisma.post.findFirst({
+        where: {
+          id: postId,
+          authorId: userId,
+        },
+      });
+      if (findpost === null) {
+        return c.json({ msg: "post not found" }, 404);
+      } else {
+        const editPost = await prisma.post.update({
+          where: {
+            id: postId,
+          },
+          data: {
+            title: validInputdata.data?.title,
+            content: validInputdata.data?.content,
+          },
+        });
+        return c.json(
+          {
+            msg: "post update succesfully ",
+          },
+          200,
+        );
+      }
+    } catch (error) {
+      console.error("not able to update user", error);
+      return c.json({ msg: "internal server error" });
+    }
+  }
+});
+
+posts.delete("/post/delete/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+  try {
+    const findPost = await prisma.post.findFirst({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
+    });
+    if (findPost === null) {
+      c.json({ msg: "post not found" });
+    } else {
+      const deletePost = await prisma.post.delete({
+        where: {
+          id: postId,
+        },
+      });
+      c.json({ msg: "user as been deleted" });
+    }
+  } catch (error) {
+    return console.error("User not deleted", error);
+  }
+});
+
+posts.get("/posts/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const Userid = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+  try {
+    const findPost = await prisma.post.findFirst({
+      where: {
+        id: postId,
+        published: true,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+    if (findPost === null) {
+      return c.json(
+        {
+          msg: "post didn't exist",
+        },
+        404,
+      );
+    } else {
+      return c.json({ findPost });
+    }
+  } catch (error) {
+    return c.json({ error });
+  }
 });
 
 export default posts;

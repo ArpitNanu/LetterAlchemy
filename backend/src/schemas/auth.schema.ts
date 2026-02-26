@@ -19,9 +19,18 @@ export const PostSchema = z.object({
   content: z.string(),
   authorId: z.number(),
 });
+export const CommentSchema = z.object({
+  text: z.string(),
+});
 
 type SignInSchemaType = z.infer<typeof SignInSchema>;
 type SchemaValidationType = z.infer<typeof SignupSchema>;
 type SchemaPostType = z.infer<typeof PostSchema>;
+type Schemacomment = z.infer<typeof CommentSchema>;
 
-export { SchemaValidationType, SignInSchemaType, SchemaPostType };
+export {
+  SchemaValidationType,
+  SignInSchemaType,
+  SchemaPostType,
+  Schemacomment,
+};
