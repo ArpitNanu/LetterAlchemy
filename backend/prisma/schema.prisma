@@ -62,7 +62,7 @@ text String
 url String
 title String
 aiHeadings Json
-score Int
+category String
 createdAt DateTime @default(now())
 }
 
