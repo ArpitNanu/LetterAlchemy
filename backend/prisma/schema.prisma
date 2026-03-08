@@ -58,10 +58,9 @@ model like {
 
 model newsHeadline {
 id Int @id @default(autoincrement())
-text String
-url String
+text String?
+url String @unique // what if we fetch next day same url is fetch() --> no uniqueness 
 title String
-aiHeadings Json
 category String
 createdAt DateTime @default(now())
 }

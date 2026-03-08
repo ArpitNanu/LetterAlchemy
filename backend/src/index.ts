@@ -5,7 +5,6 @@ import posts from "./routes/posts";
 import { authmiddleware } from "./middleware/auth.middleware";
 import { ScheduledEvent, ExecutionContext } from "@cloudflare/workers-types";
 import { getPrisma } from "./db/prisma";
-import { map } from "zod";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -59,18 +58,24 @@ export default {
       }
       return null;
     });
+
     const finalData: any[] = await Promise.all(jsonData);
     const headlineToSave = finalData
       .filter((res) => res && res.data && res.data.children)
       .flatMap((res) => res.data.children)
       .map((post) => ({
+        url: `https://reddit.com${post.data.permalink}`,
         title: post.data.title,
         category: post.data.subreddit,
-        url: `https://reddit.com${post.data.permalink}`,
       }));
-    //console.log(headlineToSave);
-    const url = headlineToSave.forEach((res) => {
-      console.log(res.url);
-    });
+    //console.log(headlineToSave)
+
+    if (headlineToSave.length > 0) {
+      const createMany = await prisma.newsHeadline.createMany({
+        data: headlineToSave,
+        skipDuplicates: true,
+      });
+      console.log(createMany.count);
+    }
   },
 };
