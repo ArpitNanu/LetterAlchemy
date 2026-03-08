@@ -18,18 +18,21 @@ posts.post("/posts/create", async (c) => {
   const userId = c.get("userId");
 
   const validInputdata = PostSchema.safeParse(body);
-
   if (validInputdata.error) {
     return c.json({
       msg: "invalid data input",
     });
   } else {
+    const titleData = validInputdata.data?.title;
+    const slugFormat = titleData?.replace(" ", "_");
+    console.log(slugFormat);
     const getuserPosts = await prisma.post.create({
       data: {
         title: validInputdata.data.title,
         content: validInputdata.data?.content,
         authorId: Number(userId),
         published: true,
+        slug: slugFormat,
       },
     });
     return c.json({
@@ -122,7 +125,7 @@ posts.delete("/post/delete/:id", async (c) => {
           id: postId,
         },
       });
-      c.json({ msg: "user as been deleted" });
+      return c.json({ msg: "user as been deleted" });
     }
   } catch (error) {
     return console.error("User not deleted", error);

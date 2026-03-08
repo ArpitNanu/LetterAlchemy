@@ -59,4 +59,30 @@ comment.post("posts/:id/comment", async (c) => {
   } catch (error) {}
 });
 
-comment.patch("post/:id/comment/edit", async (c) => {});
+comment.patch("post/:id/comment/edit", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const commentId = Number(c.req.param("id"));
+});
+
+comment.delete("post/:id/comments", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const commentId = Number(c.req.param("id"));
+  const commentFind = prisma.comment.findFirst({
+    where: {
+      id: commentId,
+      authorId: userId,
+    },
+  });
+  if (commentFind == null) {
+    return c.json({ msg: "user is not allow to delete" });
+  } else {
+    const commentDelete = prisma.comment.delete({
+      where: {
+        id: commentId,
+      },
+    });
+    return c.json({ msg: "user has been deleted successfully" });
+  }
+});

@@ -57,7 +57,6 @@ auth.post("/signup", async (c) => {
     console.log("signup request finished");
   }
 });
-
 auth.get("/signin", async (c) => {
   try {
     const body = await c.req.json();
