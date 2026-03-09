@@ -5,7 +5,7 @@ import posts from "./routes/posts";
 import { authmiddleware } from "./middleware/auth.middleware";
 import { ScheduledEvent, ExecutionContext } from "@cloudflare/workers-types";
 import { getPrisma } from "./db/prisma";
-import { GoogleGenAI } from "@google/genai";
+import { summarizeHeadline } from "./services/gemini";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -33,11 +33,10 @@ export default {
   fetch: app.fetch,
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
     const prisma = getPrisma(env);
-    const ai = new GoogleGenAI({
-      apiKey: env.GEMINI_API_KEY,
-    });
+
     const niches = [
       {
+        // add to different folder/file for cleaner code
         topic: "Tech",
         subreddit: "technology",
       },
@@ -85,10 +84,34 @@ export default {
       where: {
         text: null,
       },
-      take: 10, // remember v8 heap memory we have save bcuz 128mb for free tier,
+      take: 10, // remember v8 heap memory we have save bcuz 128mb for free tier
+      select: {
+        title: true,
+        id: true,
+      },
     });
-    // pendingHeadLines.forEach((row) => {
-    //   console.log("title:", row.title);
-    // }); check the fetch
+    // const aiGeneratedhealines =  pendingHeadLines.map((element) => {
+    //   summarizeHeadline(element.title, env.GEMINI_API_KEY);
+    // }); Resource Exhaustion
+    for (const post of pendingHeadLines) {
+      try {
+        const summary = await summarizeHeadline(post.title, env.GEMINI_API_KEY);
+        if (summary) {
+          const writeSummary = await prisma.newsHeadline.update({
+            where: {
+              id: post.id,
+            },
+            data: {
+              text: summary,
+            },
+            select: {
+              text: true,
+            },
+          });
+        }
+      } catch (error) {
+        console.error(`Failed to process ${post.id}`, error);
+      }
+    }
   },
 };
