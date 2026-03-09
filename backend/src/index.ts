@@ -5,6 +5,7 @@ import posts from "./routes/posts";
 import { authmiddleware } from "./middleware/auth.middleware";
 import { ScheduledEvent, ExecutionContext } from "@cloudflare/workers-types";
 import { getPrisma } from "./db/prisma";
+import { GoogleGenAI } from "@google/genai";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -32,6 +33,9 @@ export default {
   fetch: app.fetch,
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
     const prisma = getPrisma(env);
+    const ai = new GoogleGenAI({
+      apiKey: env.GEMINI_API_KEY,
+    });
     const niches = [
       {
         topic: "Tech",
@@ -77,5 +81,14 @@ export default {
       });
       console.log(createMany.count);
     }
+    const pendingHeadLines = await prisma.newsHeadline.findMany({
+      where: {
+        text: null,
+      },
+      take: 10, // remember v8 heap memory we have save bcuz 128mb for free tier,
+    });
+    // pendingHeadLines.forEach((row) => {
+    //   console.log("title:", row.title);
+    // }); check the fetch
   },
 };
