@@ -34,8 +34,8 @@ type AuthAction =
 interface AuthState {
   user: User | null;
   token: string | null;
-  isAuthenticated: Boolean;
-  isLoading: Boolean;
+  isAuthenticated: boolean;
+  isLoading: boolean;
 }
 const initalState: AuthState = {
   user: null,

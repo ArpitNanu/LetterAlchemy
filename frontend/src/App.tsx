@@ -1,3 +1,11 @@
+import { LoginPage } from "./pages/LoginPage";
+
 export const App = () => {
-  return <div className="bg-amber-500">App</div>;
+  return (
+    <>
+      <div className="bg-gray-700">
+        <LoginPage />
+      </div>
+    </>
+  );
 };
