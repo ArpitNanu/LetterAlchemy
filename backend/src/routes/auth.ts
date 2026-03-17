@@ -5,6 +5,7 @@ import { getPrisma } from "../db/prisma";
 import bcrypt from "bcryptjs";
 import { Env } from "../types/env";
 import { generateAccessToken } from "../utils/auth.utils";
+import { email } from "zod";
 
 const auth = new Hono<{ Bindings: Env }>();
 
@@ -74,6 +75,12 @@ auth.get("/signin", async (c) => {
         where: {
           email: validInput.data.email,
         },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+          firstName: true,
+        },
       });
       if (!userData) {
         return c.json(
@@ -92,6 +99,20 @@ auth.get("/signin", async (c) => {
             userData.id.toString(),
             userData.email,
             c.env.JWT_SECRET,
+          );
+          return c.json(
+            {
+              message: "logged in successfully",
+              token: token,
+              user: {
+                user: {
+                  id: userData.id,
+                  email: userData.email,
+                  firstName: userData.firstName,
+                },
+              },
+            },
+            200,
           );
         }
       }

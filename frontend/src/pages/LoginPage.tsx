@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import login from "../services/authService";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -13,12 +14,27 @@ export const LoginPage = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     dispatch({ type: "LOGIN_START" });
-
     console.log("form", { email, password });
-    
+    const userForm = {
+      email: email,
+      password: password,
+    };
+    try {
+      const data = await login(userForm);
+      dispatch({
+        type: "LOGIN-SUCCESS",
+        payload: {
+          user: data.user,
+          token: data.token,
+        },
+      });
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Login Failed";
+      dispatch({ type: "LOGIN_FAILED", payload: message });
+    }
   };
   return (
     <div className="flex justify-center h-screen items-center">
