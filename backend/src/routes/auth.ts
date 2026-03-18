@@ -5,7 +5,7 @@ import { getPrisma } from "../db/prisma";
 import bcrypt from "bcryptjs";
 import { Env } from "../types/env";
 import { generateAccessToken } from "../utils/auth.utils";
-import { email } from "zod";
+import { use } from "hono/jsx";
 
 const auth = new Hono<{ Bindings: Env }>();
 
@@ -46,6 +46,14 @@ auth.post("/signup", async (c) => {
           {
             msg: "new user signup successfully",
             Authorization: token,
+            user: {
+              id: user.id,
+              email: user.email,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              bio: user.bio,
+              socailLinks: user.socialLinks,
+            },
           },
           201,
         );
@@ -58,7 +66,7 @@ auth.post("/signup", async (c) => {
     console.log("signup request finished");
   }
 });
-auth.get("/signin", async (c) => {
+auth.post("/signin", async (c) => {
   try {
     const body = await c.req.json();
     const validInput = SignInSchema.safeParse(body);
@@ -85,9 +93,9 @@ auth.get("/signin", async (c) => {
       if (!userData) {
         return c.json(
           {
-            message: "No user exist",
+            message: "Invalid email or password",
           },
-          404,
+          400,
         );
       } else {
         const storeHash = userData.password;

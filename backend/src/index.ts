@@ -6,8 +6,15 @@ import { authmiddleware } from "./middleware/auth.middleware";
 import { ScheduledEvent, ExecutionContext } from "@cloudflare/workers-types";
 import { getPrisma } from "./db/prisma";
 import { summarizeHeadline } from "./services/gemini";
+import { cors } from "hono/cors";
 
 const app = new Hono<{ Bindings: Env }>();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  }),
+);
 
 app.get("/", (c) => c.text("hono!"));
 

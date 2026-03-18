@@ -6,7 +6,7 @@ export const SignupSchema = z.object({
   lastName: z.string().trim(),
   password: z.string(),
   bio: z.string().max(250).optional(),
-  socialLinks: z.array(z.string().trim().url("Invalid URL")),
+  socialLinks: z.string().trim(),
 });
 
 export const SignInSchema = z.object({
