@@ -6,7 +6,7 @@ export const SignupSchema = z.object({
   lastName: z.string().trim(),
   password: z.string(),
   bio: z.string().max(250).optional(),
-  socialLinks: z.string().optional(),
+  socialLinks: z.array(z.string().trim().url("Invalid URL")),
 });
 
 export const SignInSchema = z.object({
@@ -19,6 +19,7 @@ export const PostSchema = z.object({
   content: z.string(),
   authorId: z.number(),
 });
+
 export const CommentSchema = z.object({
   text: z.string(),
 });
@@ -26,11 +27,11 @@ export const CommentSchema = z.object({
 type SignInSchemaType = z.infer<typeof SignInSchema>;
 type SchemaValidationType = z.infer<typeof SignupSchema>;
 type SchemaPostType = z.infer<typeof PostSchema>;
-type Schemacomment = z.infer<typeof CommentSchema>;
+type SchemacommentType = z.infer<typeof CommentSchema>;
 
 export {
   SchemaValidationType,
   SignInSchemaType,
   SchemaPostType,
-  Schemacomment,
+  SchemacommentType,
 };
