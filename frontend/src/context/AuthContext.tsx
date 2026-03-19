@@ -15,9 +15,7 @@ type LoginSuccessAction = {
 
 type LoginFailAction = {
   type: "LOGIN_FAILED";
-  payload: {
-    payload: string; // error message before backend
-  };
+  payload: string; // error message before backend
 };
 
 type LogoutAction = {
@@ -52,6 +50,7 @@ function reducer(state: AuthState, action: AuthAction) {
     case "LOGIN-SUCCESS":
       localStorage.setItem("token", action.payload.token);
       localStorage.setItem("user", JSON.stringify(action.payload.user));
+
       return {
         ...state,
         user: action.payload.user,

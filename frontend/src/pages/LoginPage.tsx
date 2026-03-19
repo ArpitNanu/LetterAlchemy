@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import login from "../services/authService";
+import { login } from "../services/authService";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -40,6 +40,8 @@ export const LoginPage = () => {
     <div className="flex justify-center h-screen items-center">
       <form
         onSubmit={handleSubmit}
+        method="post"
+        autoComplete="on"
         className=" border-2 border-solid flex flex-col justify-center items-center p-2 rounded-2xl gap-4 "
       >
         <label htmlFor="email">Login</label>
@@ -74,3 +76,5 @@ export const LoginPage = () => {
     </div>
   );
 };
+
+
