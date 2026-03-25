@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import { SigupPage } from "./pages/SignupPage";
 import { Dashboard } from "./pages/Dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import editor from "./components/editor/EditorMain";
+import { EditorPage } from "./pages/EditorPage";
 
 export const App = () => {
   return (
@@ -19,6 +21,7 @@ export const App = () => {
             //bcuz it's like bouncer for dashboard
           }
         />
+        <Route path="/editor" element={<EditorPage />} />
       </Routes>
     </>
   );
