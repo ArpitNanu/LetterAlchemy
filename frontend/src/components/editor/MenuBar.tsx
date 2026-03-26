@@ -36,13 +36,23 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
+const HEADING_ICONS = {
+  h1: { icon: Heading1, label: "Heading 1" },
+  h2: { icon: Heading2, label: "Heading 2" },
+  h3: { icon: Heading3, label: "Heading 3" },
+  h4: { icon: Heading4, label: "Heading 4" },
+  h5: { icon: Heading5, label: "Heading 5" },
+  h6: { icon: Heading6, label: "Heading 6" },
+  p: { icon: Heading, label: "Heading" },
+} as const;
+
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   const editorState = useEditorState({
     editor,
     selector: menuBarStateSelector,
   });
 
-  const currentHeadling = () => {
+  const currentheading = () => {
     if (editorState.isHeading1) return "h1";
     if (editorState.isHeading2) return "h2";
     if (editorState.isHeading3) return "h3";
@@ -51,6 +61,10 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
     if (editorState.isHeading6) return "h6";
     return "p";
   };
+
+  const currentKey = currentheading();
+  const CurrentIcon =
+    HEADING_ICONS[currentKey as keyof typeof HEADING_ICONS]?.icon || Heading; // need to understand this better
 
   const changeHeadling = (head: string) => {
     if (head === "h1")
@@ -67,7 +81,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
       return editor.chain().focus().toggleHeading({ level: 6 }).run();
   };
   return (
-    <div className="control-group">
+    <div className="control-group bg-white border-gray-200">
       <div className="button-group">
         <Toggle
           size="sm"
@@ -97,7 +111,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
         <Toggle
           size="sm"
           pressed={editorState.isCode}
-          onClick={() => editor.chain().focus().toggleCode().run()}
+          onPressedChange={() => editor.chain().focus().toggleCode().run()}
           disabled={!editorState.canCode}
         >
           <Code />
@@ -109,7 +123,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
             editor.chain().focus().unsetAllMarks().clearNodes().run()
           }
         >
-          <Eraser h-4 w-4 />
+          <Eraser className="h-4 w-4" />
         </Button>
         <Toggle
           size="sm"
@@ -123,33 +137,27 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost">
               {" "}
-              <Heading />
+              <CurrentIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-32">
             <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
             <DropdownMenuRadioGroup
-              value={currentHeadling()}
+              value={currentheading()}
               onValueChange={changeHeadling}
             >
-              <DropdownMenuRadioItem value="h1">
-                <Heading1 className="h-4 w-4" />
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="h2">
-                <Heading2 />
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="h3">
-                <Heading3 />
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="h4">
-                <Heading4 />
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="h5">
-                <Heading5 />
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="h6">
-                <Heading6 />
-              </DropdownMenuRadioItem>
+              {Object.entries(HEADING_ICONS).map(
+                ([key, { icon: Icon, label }]) => (
+                  <DropdownMenuRadioItem
+                    key={key}
+                    value={key}
+                    className="flex items-center gap-2"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{label}</span>
+                  </DropdownMenuRadioItem>
+                ),
+              )}
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -176,16 +184,16 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           size="sm"
           pressed={editorState.isCodeBlock}
           onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editorState.isCodeBlock ? "is-active" : ""}
         >
           <SquareCode />
         </Toggle>
+
         <Toggle
           size="sm"
           pressed={editorState.isBlockquote}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
         >
-          <blockquote />
+          <blockquote className="w-4 h-4" />
         </Toggle>
         <Button
           size="sm"
