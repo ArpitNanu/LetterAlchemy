@@ -22,7 +22,8 @@ model user {
 model post {
   id        Int       @id @default(autoincrement())
   title     String
-  content   String?
+  content   Json?
+  slug      String?  @unique
   published Boolean   @default(false)
   views     Int       @default(0)
   author    user      @relation(fields: [authorId], references: [id])
@@ -32,7 +33,7 @@ model post {
   comments  comment[]
   likes     like[]
   aiTweet   aiTweet[]
-  slug      String  @unique
+ 
 }
 
 model comment {

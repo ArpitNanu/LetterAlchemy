@@ -12,7 +12,7 @@ const posts = new Hono<{
   };
 }>();
 
-posts.post("/posts/create", async (c) => {
+posts.post("/create", async (c) => {
   const prisma = getPrisma(c.env);
   const body = await c.req.json();
   const userId = c.get("userId");
@@ -26,7 +26,7 @@ posts.post("/posts/create", async (c) => {
     const titleData = validInputdata.data?.title;
     const slugFormat = titleData?.replace(" ", "_");
     console.log(slugFormat);
-    const getuserPosts = await prisma.post.create({
+    const createPosts = await prisma.post.create({
       data: {
         title: validInputdata.data.title,
         content: validInputdata.data?.content,
@@ -36,9 +36,9 @@ posts.post("/posts/create", async (c) => {
       },
     });
     return c.json({
-      id: getuserPosts.id,
-      title: getuserPosts.title,
-      createdAt: getuserPosts.createdAt,
+      msg: "post created successfully",
+      id: createPosts.id,
+      createdAt: createPosts.createdAt,
     });
   }
 });
@@ -47,18 +47,15 @@ posts.get("/posts", async (c) => {
   const prisma = getPrisma(c.env);
   const userId = c.get("userId");
   try {
-    const posts = await prisma.post.findMany({
+    const getPosts = await prisma.post.findMany({
       where: {
         authorId: Number(userId),
-      },
-      select: {
-        published: true,
       },
       orderBy: {
         updatedAt: "desc",
       },
     });
-    return c.json({ msg: { posts } });
+    return c.json({ getPosts });
   } catch (error) {
     console.error("couldn't find the posts for you:", error);
   }
@@ -95,6 +92,9 @@ posts.patch("/edit/:id", async (c) => {
         return c.json(
           {
             msg: "post update succesfully ",
+            editPost: {
+              id: editPost.id,
+            },
           },
           200,
         );
