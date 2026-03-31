@@ -1,5 +1,4 @@
-import type { Editor } from "@tiptap/core";
-import { useEditorState } from "@tiptap/react";
+import { useCurrentEditor, useEditorState } from "@tiptap/react";
 import {
   Bold,
   Code,
@@ -46,7 +45,9 @@ const HEADING_ICONS = {
   p: { icon: Heading, label: "Heading" },
 } as const;
 
-export const MenuBar = ({ editor }: { editor: Editor }) => {
+export const MenuBar = () => {
+  const { editor } = useCurrentEditor();
+  if (!editor) return null;
   const editorState = useEditorState({
     editor,
     selector: menuBarStateSelector,

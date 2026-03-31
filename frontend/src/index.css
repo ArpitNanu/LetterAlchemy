@@ -158,3 +158,29 @@
   list-style-type: decimal;
   padding-left: 1.5rem;
 }
+
+/* to resevere the hard reset */
+.tiptap h1 {
+  @apply text-3xl font-bold; 
+  /* tailwind complier @apply */
+}
+
+.tiptap h2 {
+  @apply text-2xl font-semibold;
+}
+
+.tiptap h3 {
+  @apply text-xl font-semibold;
+}
+
+.tiptap h4 {
+  @apply text-lg font-medium;
+}
+
+.tiptap h5 {
+  @apply text-base font-medium;
+}
+
+.tiptap h6 {
+  @apply text-sm font-medium;
+}
