@@ -11,7 +11,7 @@ export const Title = ({ value, handleTitleChange }: Props) => {
         type="text"
         value={value}
         id="myinput"
-        placeholder="Tite"
+        placeholder="Title"
         onChange={(e) => handleTitleChange(e.target.value)}
       />
     </div>

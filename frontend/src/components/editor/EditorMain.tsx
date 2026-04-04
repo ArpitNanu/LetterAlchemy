@@ -22,7 +22,7 @@ const EditorMain = ({ value, handleContentChange }: Props) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-zinc max-w-none focus:outline-none min-h-125 p-10 bg-white shadow-lg border rounded-xl mx-auto",
+          "prose prose-zinc max-w-none focus:outline-none min-h-125 p-10 bg-white shadow-r-md shadow-b-md border rounded-xl mx-auto ",
       },
     },
   });
