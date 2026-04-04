@@ -4,6 +4,7 @@ import { Env } from "../types/env";
 
 import { getPrisma } from "../db/prisma";
 import { PostSchema } from "../schemas/auth.schema";
+import { success } from "zod";
 
 const posts = new Hono<{
   Bindings: Env;
@@ -23,7 +24,7 @@ posts.post("/create", async (c) => {
       msg: "invalid data input",
     });
   } else {
-    const titleData = validInputdata.data?.title;
+    //const titleData = validInputdata.data?.title;
     // const slugFormat = titleData?.replace(" ", "_");
     // console.log(slugFormat);
     const createPosts = await prisma.post.create({
@@ -35,10 +36,41 @@ posts.post("/create", async (c) => {
       },
     });
     return c.json({
+      success: true,
       msg: "post created successfully",
-      id: createPosts.id,
-      createdAt: createPosts.createdAt,
+      data: {
+        id: createPosts.id,
+        createdAt: createPosts.createdAt,
+      },
     });
+  }
+});
+
+posts.get("/posts/latest", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = c.get("userId");
+  try {
+    const getDraft = await prisma.post.findFirst({
+      where: {
+        authorId: Number(userId),
+        published: false,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+      },
+    });
+    return c.json({
+      success: true,
+      messgae: "Draft sucessfully fetched",
+      data: getDraft || null,
+    });
+  } catch (error) {
+    console.error("couldn't find the posts for you:", error);
   }
 });
 
@@ -46,15 +78,24 @@ posts.get("/posts", async (c) => {
   const prisma = getPrisma(c.env);
   const userId = c.get("userId");
   try {
-    const getPosts = await prisma.post.findMany({
+    const getDraft = await prisma.post.findMany({
       where: {
         authorId: Number(userId),
       },
       orderBy: {
         updatedAt: "desc",
       },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+      },
     });
-    return c.json({ getPosts });
+    return c.json({
+      success: true,
+      messgae: "Draft sucessfully fetched",
+      data: getDraft || null,
+    });
   } catch (error) {
     console.error("couldn't find the posts for you:", error);
   }
@@ -124,7 +165,7 @@ posts.delete("/post/delete/:id", async (c) => {
           id: postId,
         },
       });
-      return c.json({ msg: "user as been deleted" });
+      return c.json({ success: true, message: "user as been deleted" });
     }
   } catch (error) {
     return console.error("User not deleted", error);
@@ -139,7 +180,7 @@ posts.get("/posts/:id", async (c) => {
     const findPost = await prisma.post.findFirst({
       where: {
         id: postId,
-        published: true,
+        authorId: Userid,
       },
       select: {
         id: true,
@@ -161,7 +202,7 @@ posts.get("/posts/:id", async (c) => {
         404,
       );
     } else {
-      return c.json({ findPost });
+      return c.json({ success: true, data: findPost });
     }
   } catch (error) {
     return c.json({ error });
