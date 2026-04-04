@@ -18,21 +18,20 @@ posts.post("/create", async (c) => {
   const userId = c.get("userId");
 
   const validInputdata = PostSchema.safeParse(body);
-  if (validInputdata.error) {
+  if (!validInputdata.success) {
     return c.json({
       msg: "invalid data input",
     });
   } else {
     const titleData = validInputdata.data?.title;
-    const slugFormat = titleData?.replace(" ", "_");
-    console.log(slugFormat);
+    // const slugFormat = titleData?.replace(" ", "_");
+    // console.log(slugFormat);
     const createPosts = await prisma.post.create({
       data: {
         title: validInputdata.data.title,
         content: validInputdata.data?.content,
         authorId: Number(userId),
-        published: true,
-        slug: slugFormat,
+        published: false,
       },
     });
     return c.json({
