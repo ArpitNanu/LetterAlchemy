@@ -17,7 +17,7 @@ export const SignInSchema = z.object({
 export const PostSchema = z.object({
   title: z.string(),
   content: z.string(),
-  authorId: z.number(),
+  published: z.boolean().optional(),
 });
 
 export const CommentSchema = z.object({

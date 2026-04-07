@@ -127,6 +127,7 @@ posts.patch("/edit/:id", async (c) => {
           data: {
             title: validInputdata.data?.title,
             content: validInputdata.data?.content,
+            published: validInputdata.data.published,
           },
         });
         return c.json(
