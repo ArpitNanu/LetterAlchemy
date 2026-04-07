@@ -1,11 +1,17 @@
 import apiClient from "@/lib/api";
 
+const getLatestDraft = async () => {
+  const res = await apiClient.get(`/posts/latest`);
+  return res.data;
+};
+
 const createDraft = async (data: { title: string; content: any }) => {
   const res = await apiClient.post("/create", {
     title: data.title,
     content: data.content,
     published: false,
   });
+
   return res.data;
 };
 
@@ -16,14 +22,14 @@ const updateDraft = async (
   const res = await apiClient.patch(`/edit/${id}`, {
     title: data.title,
     content: data.content,
-    published: false,
   });
   return res.data;
 };
 
-const getLatestDraft = async () => {
-  const res = await apiClient.get(`/posts/latest`);
+const publishingDraft = async (id: number) => {
+  const res = await apiClient.patch(`/edit/${id}`, {
+    published: true,
+  });
   return res.data;
 };
-
-export { createDraft, updateDraft, getLatestDraft };
+export { createDraft, updateDraft, getLatestDraft, publishingDraft };
