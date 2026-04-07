@@ -127,15 +127,18 @@ posts.patch("/edit/:id", async (c) => {
           data: {
             title: validInputdata.data?.title,
             content: validInputdata.data?.content,
-            published: validInputdata.data.published,
+            published: validInputdata.data?.published,
+          },
+          select: {
+            id: true,
+            published: true,
           },
         });
         return c.json(
           {
-            msg: "post update succesfully ",
-            editPost: {
-              id: editPost.id,
-            },
+            success: true,
+            message: "post update succesfully ",
+            data: editPost,
           },
           200,
         );
