@@ -34,10 +34,12 @@ export const EditorPage = () => {
     //“React lifecycle is sync → my work is async → I bridge them”
     latestPost();
   }, []);
+
   const handlePublished = async () => {
     setPublishing(true);
     try {
       const reponse = await publishingDraft(draftId);
+      
     } catch (error) {
       console.error("Unable to publish the draft", error);
     } finally {
