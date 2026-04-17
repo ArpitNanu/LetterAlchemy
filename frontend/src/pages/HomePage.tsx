@@ -1,5 +1,25 @@
+import { getPublicPost } from "@/api/postApi";
+import PostCard from "@/components/ui/PostCard";
+import { useEffect, useState } from "react";
+
 export const HomePage = () => {
+  const [post, setPost] = useState([]);
+  useEffect(() => {
+    const publicPost = async () => {
+      try {
+        const res = await getPublicPost();
+        if (!res.success) return;
+        setPost(res.data);
+      } catch (error) {}
+    };
+    publicPost()
+  }, []);
   return (
-    <div>HomePage</div>
-  )
-}
+    <div className=" flex h-full">
+      <div className="w-3/4">
+        <PostCard posts={post} />
+      </div>
+      <aside className="min-w-1/4">rightsidddfebar</aside>
+    </div>
+  );
+};

@@ -82,7 +82,7 @@ export const MenuBar = () => {
       return editor.chain().focus().toggleHeading({ level: 6 }).run();
   };
   return (
-    <div className="control-group bg-gray-50 flex gap-2  justify-center items-center m-4   rounded-2xl p-2  w-max shadow-xl ring-white border-t-gray-200 border-l-gray-200 text-gray-500 border-b-gray-500 border-r-gray-500 hover:bg-white hover:text-gray-600 ">
+    <div className="control-group bg-gray-50 flex gap-2  justify-center items-center rounded-2xl p-2 h-min w-fit shadow-xl ring-white border-t-gray-200 border-l-gray-200 text-gray-500 border-b-gray-500 border-r-gray-500 hover:bg-white hover:text-gray-600 ">
       <div className="button-group">
         <Toggle
           className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"

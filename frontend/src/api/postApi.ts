@@ -32,4 +32,16 @@ const publishingDraft = async (id: number) => {
   });
   return res.data;
 };
-export { createDraft, updateDraft, getLatestDraft, publishingDraft };
+
+const getPublicPost = async () => {
+  const res = await apiClient.get("/public");
+  return res.data;
+};
+
+export {
+  createDraft,
+  updateDraft,
+  getLatestDraft,
+  publishingDraft,
+  getPublicPost,
+};

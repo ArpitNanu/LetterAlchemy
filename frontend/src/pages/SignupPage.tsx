@@ -1,9 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { SignupSchema } from "../schemas/auth.schema";
 import { signUp } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import { Input } from "@/components/ui/Input";
+import { useNavigate } from "react-router-dom";
 
 export const SigupPage = () => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: "",
     firstName: "",
@@ -13,7 +17,7 @@ export const SigupPage = () => {
     socialLinks: "",
   });
   const { state, dispatch } = useAuth();
-  const handleChange = (event: any) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     setForm({
       ...form,
       [event.target.name]: event.target.value,
@@ -43,80 +47,82 @@ export const SigupPage = () => {
             user: data.user,
           },
         });
+        navigate("/layout");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log("Signup error", error);
+    }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <form
-        action=""
-        onSubmit={handleSubmit}
-        method="post"
-        autoComplete="on"
-        className="flex gap-4 flex-col "
-      >
-        <label>email</label>
-        <input
-          type="text"
-          name="email"
-          id="FirstName"
-          placeholder="email"
-          className="border"
-          onChange={handleChange}
+    <div className="flex h-screen m-10 gap-2">
+      <div className="w-1/2">
+        <form
+          action=""
+          onSubmit={handleSubmit}
+          method="post"
+          autoComplete="on"
+          className="flex gap-4 flex-col "
+        >
+          <div className="flex gap-2">
+            <Input
+              name="firstName"
+              value={form.firstName}
+              label="First Name"
+              onChange={handleChange}
+              autoComplete="given-name"
+            />
+            <Input
+              name="lastName"
+              value={form.lastName}
+              label="Last Name"
+              onChange={handleChange}
+              autoComplete="family-name"
+            />
+          </div>
+          <Input
+            name="email"
+            value={form.email}
+            label="email"
+            onChange={handleChange}
+            autoComplete="email"
+          />
+          <Input
+            name="password"
+            value={form.password}
+            label="Create password"
+            onChange={handleChange}
+            autoComplete="new-password"
+            type="password"
+          />
+          {/* <Input
+            name="Bio"
+            value={form.bio}
+            label="bio"
+            onChange={handleChange}
+          /> */}
+          <Input
+            name="socialLinks"
+            value={form.socialLinks}
+            label="LinkedIn / Twitter URl"
+            onChange={handleChange}
+          />
+          <button
+            type="submit"
+            disabled={state.isLoading}
+            className={`cursor-pointer p-2 rounded-lg  bg-green-500 text-white active:ring hover:bg-green-600 active:bg-green-600 active:ring-green-400 active:ring-offset-1 ${state.isLoading ? "bg-gray-400" : ""}`}
+          >
+            Create Account
+          </button>
+        </form>
+      </div>
+      <div className="w-1/2">
+        <img
+          className="h-full w-full object-cover"
+          src="https://images.unsplash.com/reserve/LJIZlzHgQ7WPSh5KVTCB_Typewriter.jpg?q=80&w=996&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="typwriter"
         />
-        <label>First Name</label>
-        <input
-          type="text"
-          name="firstName"
-          id=""
-          placeholder="First Name"
-          className="border"
-          onChange={handleChange}
-        />
-        <label>Last Name</label>
-        <input
-          type="text"
-          name="lastName"
-          id=""
-          placeholder="Last Name"
-          className="border"
-          onChange={handleChange}
-        />
-        <label>Password</label>
-        <input
-          type="text"
-          name="password"
-          id=""
-          placeholder="Password"
-          className="border"
-          onChange={handleChange}
-        />
-        <label>Bio</label>
-        <input
-          type="text"
-          name="bio"
-          id=""
-          placeholder="tell me about yourself"
-          className="border"
-          onChange={handleChange}
-        />
-        <label>socialLinks</label>
-        <input
-          type="text"
-          name="socialLinks"
-          id=""
-          placeholder="your linkedIn, X(formelyTwitter) links"
-          className="border"
-          onChange={handleChange}
-        />
-        <input
-          type="submit"
-          value={state.isLoading ? "Creating new account" : "Sign up"}
-          disabled={state.isLoading}
-          className={`cursor-pointer p-2 rounded-lg ${state.isLoading ? "bg-gray-400" : "bg-green-600 text-white"}`}
-        ></input>
-      </form>
+      </div>
     </div>
   );
 };

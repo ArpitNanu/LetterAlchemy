@@ -6,23 +6,36 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import { EditorPage } from "./pages/EditorPage";
 import { HomePage } from "./pages/HomePage";
+import { Layout } from "./components/Layout/Layout";
+import { Bookmark } from "./components/Bookmark";
+import { Profile } from "./components/Profile";
 
 export const App = () => {
   return (
     <>
       <Routes>
-        <Route index element={<HomePage />} />
+        <Route element={<Layout />}>
+          <Route path="/" index element={<HomePage />} />
+
+          <Route path="/bookmark" element={<Bookmark />} />
+
+          {/* make book,pro, dash, protected later,editor */}
+          <Route path="/profile" element={<Profile />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+              //bcuz it's like bouncer for dashboard
+            }
+          />
+        </Route>
+
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SigupPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-            //bcuz it's like bouncer for dashboard
-          }
-        />
+
         <Route path="/editor" element={<EditorPage />} />
       </Routes>
     </>

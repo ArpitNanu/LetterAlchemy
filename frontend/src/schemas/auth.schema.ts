@@ -11,7 +11,7 @@ export const SignupSchema = z.object({
   lastName: z.string().trim(),
   password: z.string(),
   bio: z.string().max(250).optional(),
-  socialLinks: z.url().optional(),
+  socialLinks: z.url().optional().or(z.literal("")),
 });
 
 type LogInSchemaType = z.infer<typeof LogInSchema>;
