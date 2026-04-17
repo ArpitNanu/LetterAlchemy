@@ -4,7 +4,6 @@ import { Env } from "../types/env";
 
 import { getPrisma } from "../db/prisma";
 import { PostSchema } from "../schemas/auth.schema";
-import { success } from "zod";
 
 const posts = new Hono<{
   Bindings: Env;
@@ -89,6 +88,9 @@ posts.get("/posts", async (c) => {
         id: true,
         title: true,
         content: true,
+        createdAt: true,
+        likes: true,
+        comments: true,
       },
     });
     return c.json({
@@ -101,6 +103,55 @@ posts.get("/posts", async (c) => {
   }
 });
 
+posts.get("/public", async (c) => {
+  const prisma = getPrisma(c.env);
+  try {
+    const getPublicPosts = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+    const posts = getPublicPosts.map((post) => ({
+      id: post.id,
+      title: post.title,
+      createdAt: post.createdAt,
+
+      author: post.author,
+
+      likes: post._count.likes,
+      comments: post._count.comments,
+    }));
+    return c.json({
+      success: true,
+      message: "public post fetch",
+      data: posts,
+    });
+  } catch (error) {
+    console.error(error);
+    return c.json({ success: false, msg: "Error fetching posts" }, 500);
+  }
+});
 posts.patch("/edit/:id", async (c) => {
   const prisma = getPrisma(c.env);
   const userId = Number(c.get("userId"));
