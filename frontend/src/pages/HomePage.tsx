@@ -12,14 +12,14 @@ export const HomePage = () => {
         setPost(res.data);
       } catch (error) {}
     };
-    publicPost()
+    publicPost();
   }, []);
   return (
     <div className=" flex h-full">
-      <div className="w-3/4">
+      <div className="flex-1">
         <PostCard posts={post} />
       </div>
-      <aside className="min-w-1/4">rightsidddfebar</aside>
+      <aside className="w-80">rightsidddfebar</aside>
     </div>
   );
 };

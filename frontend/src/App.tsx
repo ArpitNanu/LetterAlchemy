@@ -19,7 +19,7 @@ export const App = () => {
 
           <Route path="/bookmark" element={<Bookmark />} />
 
-          {/* make book,pro, dash, protected later,editor */}
+          {/* make book,pro, dash, protected later,*/}
           <Route path="/profile" element={<Profile />} />
 
           <Route

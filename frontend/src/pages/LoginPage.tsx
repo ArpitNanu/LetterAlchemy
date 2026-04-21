@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { login } from "../services/authService";
+import { Input } from "@/components/ui/Input";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -37,44 +38,60 @@ export const LoginPage = () => {
     }
   };
   return (
-    <div className="flex justify-center h-screen items-center">
-      <form
-        onSubmit={handleSubmit}
-        method="post"
-        autoComplete="on"
-        className=" border-2 border-solid flex flex-col justify-center items-center p-2 rounded-2xl gap-4 "
-      >
-        <label htmlFor="email">Login</label>
-        <label>Email</label>
-        <input
-          type="text"
-          value={email}
-          name="email"
-          id="email "
-          onChange={handleEmail}
-          placeholder="Enter your Email"
-          className="p-4 border rounded-xl w-full h-10"
-        />
-        <label htmlFor="password">Password</label>
-        <input
-          value={password}
-          type="password"
-          name="password"
-          id="password"
-          onChange={handlePassword}
-          placeholder="Enter your Password"
-          className="border p-4  rounded-xl w-full h-10"
-        />
-        <br />
-        <input
-          className={`rounded-xl p-2 w-full ${state.isLoading ? "bg-gray-200" : "bg-blue-500"}`}
-          disabled={state.isLoading}
-          type="submit"
-          value={state.isLoading ? "Logging In..." : "Log In"}
-        />
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-100 to-gray-200 px-6">
+      {/* CARD */}
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-2">
+        {/* LEFT → FORM */}
+        <div className="flex items-center justify-center p-10">
+          <form
+            onSubmit={handleSubmit}
+            autoComplete="on"
+            className="w-full max-w-sm flex flex-col gap-5"
+          >
+            <h2 className="text-2xl font-semibold text-center">Login</h2>
+
+            <Input
+              type="text"
+              value={email}
+              name="email"
+              id="email"
+              onChange={handleEmail}
+              label="Enter email id"
+              autoComplete="email"
+            />
+
+            <Input
+              value={password}
+              type="password"
+              name="password"
+              id="password"
+              onChange={handlePassword}
+              label="Enter your password"
+              autoComplete="current-password"
+            />
+
+            <button
+              type="submit"
+              className={`rounded-xl p-2 cursor-pointer text-white ${
+                state.isLoading
+                  ? "bg-gray-400"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
+              Sign in
+            </button>
+          </form>
+        </div>
+
+        {/* RIGHT → IMAGE */}
+        <div className="hidden md:block">
+          <img
+            className="h-full w-full object-cover"
+            src="https://images.unsplash.com/reserve/LJIZlzHgQ7WPSh5KVTCB_Typewriter.jpg"
+            alt="typewriter"
+          />
+        </div>
+      </div>
     </div>
   );
 };
-
-

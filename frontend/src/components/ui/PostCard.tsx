@@ -1,18 +1,22 @@
 import { Bookmark, CalendarDays, Heart } from "lucide-react";
 
-type posts = {
+type Post = {
   id: string;
   title: string;
   text: unknown;
 };
-export const PostCard = ({ posts }) => {
+
+type PostcardProp = {
+  posts:Post[]
+}
+export const PostCard = ({ posts }:PostcardProp) => {
   return (
     <div className="bg-neutral-primary-soft m-4 ">
       {posts?.map((post) => {
         return (
-          <div className="flex flex-col p-2 ">
+          <div key={post.id} className="flex flex-col p-2">
             <div>authorname</div>
-            <div className=" flex gap-x-20 " key={post.id}>
+            <div className=" flex gap-x-20 ">
               <div className="flex flex-col gap-8 ">
                 <div>
                   <div>

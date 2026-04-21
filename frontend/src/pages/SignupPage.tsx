@@ -55,73 +55,84 @@ export const SigupPage = () => {
   };
 
   return (
-    <div className="flex h-screen m-10 gap-2">
-      <div className="w-1/2">
-        <form
-          action=""
-          onSubmit={handleSubmit}
-          method="post"
-          autoComplete="on"
-          className="flex gap-4 flex-col "
-        >
-          <div className="flex gap-2">
-            <Input
-              name="firstName"
-              value={form.firstName}
-              label="First Name"
-              onChange={handleChange}
-              autoComplete="given-name"
-            />
-            <Input
-              name="lastName"
-              value={form.lastName}
-              label="Last Name"
-              onChange={handleChange}
-              autoComplete="family-name"
-            />
-          </div>
-          <Input
-            name="email"
-            value={form.email}
-            label="email"
-            onChange={handleChange}
-            autoComplete="email"
-          />
-          <Input
-            name="password"
-            value={form.password}
-            label="Create password"
-            onChange={handleChange}
-            autoComplete="new-password"
-            type="password"
-          />
-          {/* <Input
-            name="Bio"
-            value={form.bio}
-            label="bio"
-            onChange={handleChange}
-          /> */}
-          <Input
-            name="socialLinks"
-            value={form.socialLinks}
-            label="LinkedIn / Twitter URl"
-            onChange={handleChange}
-          />
-          <button
-            type="submit"
-            disabled={state.isLoading}
-            className={`cursor-pointer p-2 rounded-lg  bg-green-500 text-white active:ring hover:bg-green-600 active:bg-green-600 active:ring-green-400 active:ring-offset-1 ${state.isLoading ? "bg-gray-400" : ""}`}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6 overflow-hidden">
+      {/* above is to take whole screen for your mental model */}
+      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-2 h-[90vh]">
+        {/* LEFT → FORM */}
+        <div className="flex items-center justify-center p-10 overflow-y-auto">
+          <form
+            onSubmit={handleSubmit}
+            autoComplete="on"
+            className="w-full max-w-md flex flex-col gap-4"
           >
-            Create Account
-          </button>
-        </form>
-      </div>
-      <div className="w-1/2">
-        <img
-          className="h-full w-full object-cover"
-          src="https://images.unsplash.com/reserve/LJIZlzHgQ7WPSh5KVTCB_Typewriter.jpg?q=80&w=996&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="typwriter"
-        />
+            <h2 className="text-2xl font-semibold text-center mb-2">
+              Create Account
+            </h2>
+
+            <div className="flex gap-2">
+              <Input
+                name="firstName"
+                value={form.firstName}
+                label="First Name"
+                onChange={handleChange}
+                autoComplete="first-name"
+              />
+              <Input
+                name="lastName"
+                value={form.lastName}
+                label="Last Name"
+                onChange={handleChange}
+                autoComplete="family-name"
+              />
+            </div>
+
+            <Input
+              name="email"
+              value={form.email}
+              label="Email"
+              onChange={handleChange}
+              autoComplete="email"
+            />
+
+            <Input
+              name="password"
+              value={form.password}
+              label="Create password"
+              type="password"
+              onChange={handleChange}
+              autoComplete="new-password"
+            />
+
+            <Input
+              name="socialLinks"
+              value={form.socialLinks}
+              label="LinkedIn / Twitter URL"
+              onChange={handleChange}
+              autoComplete="url"
+            />
+
+            <button
+              type="submit"
+              disabled={state.isLoading}
+              className={`p-2 rounded-lg text-white ${
+                state.isLoading
+                  ? "bg-gray-400"
+                  : "bg-green-500 hover:bg-green-600"
+              }`}
+            >
+              Create Account
+            </button>
+          </form>
+        </div>
+
+        {/* RIGHT → IMAGE */}
+        <div className="hidden md:block">
+          <img
+            className="w-full h-full object-cover"
+            src="https://images.unsplash.com/reserve/LJIZlzHgQ7WPSh5KVTCB_Typewriter.jpg"
+            alt="signup"
+          />
+        </div>
       </div>
     </div>
   );
