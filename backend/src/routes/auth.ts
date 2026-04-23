@@ -103,7 +103,7 @@ auth.post("/signin", async (c) => {
         if (!match) {
           return c.json({ msg: "Password not matched" }, 401);
         } else {
-          const token = generateAccessToken(
+          const token = await generateAccessToken(
             userData.id.toString(),
             userData.email,
             c.env.JWT_SECRET,
@@ -113,11 +113,9 @@ auth.post("/signin", async (c) => {
               message: "logged in successfully",
               token: token,
               user: {
-                user: {
-                  id: userData.id,
-                  email: userData.email,
-                  firstName: userData.firstName,
-                },
+                id: userData.id,
+                email: userData.email,
+                firstName: userData.firstName,
               },
             },
             200,

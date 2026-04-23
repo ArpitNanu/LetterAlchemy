@@ -8,11 +8,11 @@ export function generateAccessToken(
   const payload = {
     sub: id,
     email: email,
-    exp: Math.floor(Date.now() / 1000) + 60 * 5,
+    exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
   };
-  return sign(payload, jwtSecret);
+  return sign(payload, jwtSecret, "HS256");
 }
 
 export function verifyToken(tokenToVerify: string, jwtSecret: string) {
-  return verify(tokenToVerify, jwtSecret);
+  return verify(tokenToVerify, jwtSecret, "HS256");
 }

@@ -1,9 +1,8 @@
 import { Hono } from "hono";
-
 import { Env } from "../types/env";
-
 import { getPrisma } from "../db/prisma";
 import { PostSchema } from "../schemas/auth.schema";
+import { authmiddleware } from "../middleware/auth.middleware";
 
 const posts = new Hono<{
   Bindings: Env;
@@ -12,46 +11,60 @@ const posts = new Hono<{
   };
 }>();
 
+posts.use("*", async (c, next) => {
+  if (c.req.path.endsWith("/public")) {
+    return await next();
+  }
+  return await authmiddleware(c, next);
+});
+
 posts.post("/create", async (c) => {
   const prisma = getPrisma(c.env);
   const body = await c.req.json();
-  const userId = c.get("userId");
+  const userId = Number(c.get("userId"));
 
   const validInputdata = PostSchema.safeParse(body);
-  if (!validInputdata.success) {
-    return c.json({
-      msg: "invalid data input",
-    });
-  } else {
-    //const titleData = validInputdata.data?.title;
-    // const slugFormat = titleData?.replace(" ", "_");
-    // console.log(slugFormat);
-    const createPosts = await prisma.post.create({
-      data: {
-        title: validInputdata.data.title,
-        content: validInputdata.data?.content,
-        authorId: Number(userId),
-        published: false,
-      },
-    });
-    return c.json({
-      success: true,
-      msg: "post created successfully",
-      data: {
-        id: createPosts.id,
-        createdAt: createPosts.createdAt,
-      },
-    });
+  try {
+    if (!validInputdata.success) {
+      return c.json({
+        msg: "invalid data input",
+      });
+    } else {
+      //const titleData = validInputdata.data?.title;
+      // const slugFormat = titleData?.replace(" ", "_");
+      // console.log(slugFormat);
+      const createPosts = await prisma.post.create({
+        data: {
+          title: validInputdata.data.title,
+          content: validInputdata.data?.content,
+          authorId: userId,
+          published: false,
+        },
+      });
+      console.log("post created");
+
+      return c.json({
+        success: true,
+        msg: "post created successfully",
+        data: {
+          id: createPosts.id,
+          createdAt: createPosts.createdAt,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return c.json({ msg: "internal server error" }, 500);
   }
 });
 
 posts.get("/posts/latest", async (c) => {
   const prisma = getPrisma(c.env);
-  const userId = c.get("userId");
+  const userId = Number(c.get("userId"));
   try {
     const getDraft = await prisma.post.findFirst({
       where: {
-        authorId: Number(userId),
+        authorId: userId,
         published: false,
       },
       orderBy: {
@@ -69,17 +82,18 @@ posts.get("/posts/latest", async (c) => {
       data: getDraft || null,
     });
   } catch (error) {
-    console.error("couldn't find the posts for you:", error);
+    console.error(error);
+    return c.json({ msg: "internal server error" }, 500);
   }
 });
 
 posts.get("/posts", async (c) => {
   const prisma = getPrisma(c.env);
-  const userId = c.get("userId");
+  const userId = Number(c.get("userId"));
   try {
     const getDraft = await prisma.post.findMany({
       where: {
-        authorId: Number(userId),
+        authorId: userId,
       },
       orderBy: {
         updatedAt: "desc",
@@ -99,7 +113,8 @@ posts.get("/posts", async (c) => {
       data: getDraft || null,
     });
   } catch (error) {
-    console.error("couldn't find the posts for you:", error);
+    console.error(error);
+    return c.json({ msg: "internal server error" }, 500);
   }
 });
 
@@ -132,11 +147,11 @@ posts.get("/public", async (c) => {
         },
       },
     });
-    const posts = getPublicPosts.map((post) => ({
+    const formated = getPublicPosts.map((post) => ({
       id: post.id,
       title: post.title,
       createdAt: post.createdAt,
-
+      content: post.content,
       author: post.author,
 
       likes: post._count.likes,
@@ -145,11 +160,11 @@ posts.get("/public", async (c) => {
     return c.json({
       success: true,
       message: "public post fetch",
-      data: posts,
+      data: formated,
     });
   } catch (error) {
     console.error(error);
-    return c.json({ success: false, msg: "Error fetching posts" }, 500);
+    return c.json({ msg: "internal server error" }, 500);
   }
 });
 posts.patch("/edit/:id", async (c) => {
@@ -178,10 +193,12 @@ posts.patch("/edit/:id", async (c) => {
           data: {
             title: validInputdata.data?.title,
             content: validInputdata.data?.content,
-            published: validInputdata.data?.published,
+            //published: true,
           },
           select: {
             id: true,
+            title: true,
+            content: true,
             published: true,
           },
         });
@@ -223,7 +240,8 @@ posts.delete("/post/delete/:id", async (c) => {
       return c.json({ success: true, message: "user as been deleted" });
     }
   } catch (error) {
-    return console.error("User not deleted", error);
+    console.error(error);
+    return c.json({ msg: "internal server error" }, 500);
   }
 });
 
@@ -249,7 +267,7 @@ posts.get("/posts/:id", async (c) => {
         },
       },
     });
-    if (findPost === null) {
+    if (!findPost) {
       return c.json(
         {
           msg: "post didn't exist",
@@ -260,8 +278,37 @@ posts.get("/posts/:id", async (c) => {
       return c.json({ success: true, data: findPost });
     }
   } catch (error) {
-    return c.json({ error });
+    console.error(error);
+    return c.json({ msg: "internal server error" }, 500);
+  }
+});
+
+// backend/src/routes/posts.ts
+
+// Add this new route
+posts.patch("/publish/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+
+  try {
+    // We verify the post belongs to the user before publishing
+    const post = await prisma.post.findFirst({
+      where: { id: postId, authorId: userId }
+    });
+
+    if (!post) return c.json({ msg: "Post not found" }, 404);
+
+    const publishedPost = await prisma.post.update({
+      where: { id: postId },
+      data: { published: true }, // The backend sets this, not the frontend
+    });
+
+    return c.json({ success: true, data: publishedPost });
+  } catch (error) {
+    return c.json({ msg: "Internal server error" }, 500);
   }
 });
 
 export default posts;
+  

@@ -11,17 +11,19 @@ import { cors } from "hono/cors";
 const app = new Hono<{ Bindings: Env }>();
 
 app.use(
+  "*",
   cors({
     origin: "http://localhost:5173",
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    exposeHeaders: ["Content-Length", "Authorization"],
+    credentials: true,
   }),
 );
 
 app.get("/", (c) => c.text("hono!"));
 
-posts.use("*", authmiddleware);
-
 app.route("/api/v1", auth);
-
 app.route("/api/v1", posts);
 
 app.onError((err, c) => {

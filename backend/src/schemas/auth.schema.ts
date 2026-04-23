@@ -16,7 +16,7 @@ export const SignInSchema = z.object({
 
 export const PostSchema = z.object({
   title: z.string(),
-  content: z.string(),
+  content: z.any(),
   published: z.boolean().optional(),
 });
 
