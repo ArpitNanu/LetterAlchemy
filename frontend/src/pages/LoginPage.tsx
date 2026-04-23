@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { login } from "../services/authService";
 import { Input } from "@/components/ui/Input";
+import { useNavigate } from "react-router-dom";
 
 export const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { state, dispatch } = useAuth();
@@ -32,6 +34,7 @@ export const LoginPage = () => {
           token: data.token,
         },
       });
+      navigate("/");
     } catch (error: any) {
       const message = error.response?.data?.message || "Login Failed";
       dispatch({ type: "LOGIN_FAILED", payload: message });

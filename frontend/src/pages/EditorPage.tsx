@@ -1,98 +1,134 @@
+// EditorPage.tsx
 import { Title } from "@/components/editor/Title";
 import EditorMain from "../components/editor/EditorMain";
 import { MenuBar } from "@/components/editor/MenuBar";
-
-import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   createDraft,
   getLatestDraft,
   updateDraft,
   publishingDraft,
 } from "@/api/postApi";
-
 import { Button } from "@/components/ui/button";
-
 import { useEditor, EditorContext } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
+const EMPTY_DOC = {
+  type: "doc",
+  content: [],
+};
 export const EditorPage = () => {
-  const [title, setTitle] = useState<string>("");
-  const [content, setConent] = useState<any>(null);
+  const navigate = useNavigate();
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState<any>(EMPTY_DOC);
+
   const [draftId, setDraftId] = useState<number | null>(null);
 
-  const [creatingDraft, setCreatingDraft] = useState<boolean>(false);
-  const [ishydrating, setIshydrating] = useState<boolean>(true);
-  const [publishing, setPublishing] = useState<boolean>(false);
+  const [creatingDraft, setCreatingDraft] = useState(false);
+  const [isHydrating, setIsHydrating] = useState(true);
+  const [publishing, setPublishing] = useState(false);
+
+ // Track if we have already loaded the draft into the editor instance
+  const hasHydratedEditor = useRef(false);
 
   const editor = useEditor({
     extensions: [StarterKit],
-    content: content || "<p></p>",
-
+    content: EMPTY_DOC,
     onUpdate({ editor }) {
-      setConent(editor.getJSON());
+      setContent(editor.getJSON());
     },
   });
 
   const providerValue = useMemo(() => ({ editor }), [editor]);
 
-  // Hydration
   useEffect(() => {
-    const latestPost = async () => {
+    const fetchDraft = async () => {
       try {
         const res = await getLatestDraft();
-        if (!res.success || !res.data || !res.id) return;
 
-        setTitle(res.data.title);
-        setConent(res.data.content);
-        setDraftId(res.id);
+        if (!res.success || !res.data) return;
+
+        setTitle(res.data.title || "");
+
+        const incomingContent = res.data.content || EMPTY_DOC;
+        setContent(incomingContent);
+
+        setDraftId(res.data.id || null);
       } catch (error) {
-        console.error("Latest draft fetch failed", error);
+        console.error(error);
       } finally {
-        setIshydrating(false);
+        setIsHydrating(false);
       }
     };
 
-    latestPost();
+    fetchDraft();
   }, []);
 
-  // Publish
+ // 2. Load the fetched content into Tiptap ONCE
+  // We don't want to call setContent on every 'content' state change, 
+  // because that would reset the user's cursor while typing.
+  useEffect(() => {
+    if (editor && !isHydrating && !hasHydratedEditor.current) {
+      if (content && content.content && content.content.length > 0) {
+        editor.commands.setContent(content);
+      }
+      hasHydratedEditor.current = true;
+    }
+  }, [editor, isHydrating, content]);
+  // 3. Handle Publishing
   const handlePublished = async () => {
     if (!draftId) return;
     setPublishing(true);
     try {
+      // Important: Save the latest content immediately before publishing 
+      // to ensure the 500ms debounce doesn't miss the last keystroke.
+      await updateDraft(draftId, { title, content });
+      
+      // Perform the publish action
       await publishingDraft(draftId);
+      navigate(`/post/${draftId}`);
     } catch (error) {
-      console.error("Unable to publish the draft", error);
+      console.error("Publishing failed:", error);
     } finally {
       setPublishing(false);
     }
   };
 
-  // Autosave
+
   useEffect(() => {
-    if (ishydrating) return;
-    if (!title.trim() && !content) return;
+    if (isHydrating) return;
+
     if (publishing) return;
 
-    const autosave = setTimeout(async () => {
+    const isContentEmpty = !content || content.content.length === 0;
+
+    if (!title.trim() && !isContentEmpty) return;
+
+    const timeout = setTimeout(async () => {
       try {
+        // Always send safe content (never null)
+
+        const safeContent = content && content.content ? content : EMPTY_DOC;
+
         if (!draftId && !creatingDraft) {
           setCreatingDraft(true);
 
-          const res = await createDraft({ title, content });
-          setDraftId(res.id);
+          const res = await createDraft({ title, content: safeContent });
+          setDraftId(res.data.id);
 
           setCreatingDraft(false);
         } else if (draftId) {
-          await updateDraft(draftId, { title, content });
+          await updateDraft(draftId, { title, content: safeContent });
         }
       } catch (error) {
-        console.error("Autosave stop", error);
+        console.error("Auto-save failed:", error);
       }
-    }, 500);
+    }, 1000);
 
-    return () => clearTimeout(autosave);
-  }, [title, content]);
+    return () => clearTimeout(timeout);
+  }, [title, content, draftId]);
 
   if (!editor) return null;
 
@@ -104,15 +140,16 @@ export const EditorPage = () => {
             <MenuBar />
           </div>
 
-          <div className="mb-2">
-            <Title value={title} handleTitleChange={setTitle} />
-          </div>
-          <div>
-            <EditorMain editor={editor} />
-          </div>
+          <Title value={title} handleTitleChange={setTitle} />
+
+          <EditorMain editor={editor} />
 
           <div className="mt-6 flex justify-end">
-            <Button onClick={handlePublished} disabled={publishing}>
+            <Button
+              className=" cursor-pointer"
+              onClick={handlePublished}
+              disabled={publishing}
+            >
               Publish
             </Button>
           </div>

@@ -1,5 +1,6 @@
 import { useReducer, createContext, useContext } from "react";
 import type { User } from "../types";
+import { setAuthToken } from "../lib/api";
 
 type LoginStartAction = {
   type: "LOGIN_START";
@@ -35,10 +36,13 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 }
+const storedUser = localStorage.getItem("user");
+const storedToken = localStorage.getItem("token");
+
 const initalState: AuthState = {
-  user: null,
-  token: null,
-  isAuthenticated: false,
+  user: storedUser ? JSON.parse(storedUser) : null,
+  token: storedToken || null,
+  isAuthenticated: !!storedToken,
   isLoading: false,
 };
 
@@ -50,7 +54,8 @@ function reducer(state: AuthState, action: AuthAction) {
     case "LOGIN-SUCCESS":
       localStorage.setItem("token", action.payload.token);
       localStorage.setItem("user", JSON.stringify(action.payload.user));
-
+      // Push token to axios immediately so the next request picks it up
+      setAuthToken(action.payload.token);
       return {
         ...state,
         user: action.payload.user,
@@ -70,6 +75,7 @@ function reducer(state: AuthState, action: AuthAction) {
     case "LOGOUT":
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      setAuthToken(null);
       return {
         ...state,
         user: null,

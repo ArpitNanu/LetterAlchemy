@@ -47,7 +47,7 @@ export const SigupPage = () => {
             user: data.user,
           },
         });
-        navigate("/layout");
+        navigate("/");
       }
     } catch (error) {
       console.log("Signup error", error);

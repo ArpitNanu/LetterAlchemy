@@ -1,5 +1,6 @@
 import { Menu, Search, SquarePen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import UserDropdown from "../ui/UserDropdown";
 
 export const TopBar = () => {
   const navigate = useNavigate();
@@ -26,7 +27,11 @@ export const TopBar = () => {
           <SquarePen />
           <span>Write</span>
         </button>
-        <button className="bg-gray-100 p-2 rounded-full w-12 h-12 cursor-pointer"></button>
+        <UserDropdown
+          name="Bonnie Green"
+          email="name@flowbite.com"
+          avatarUrl="/docs/images/people/profile-picture-5.jpg"
+        />
       </div>
     </div>
   );
