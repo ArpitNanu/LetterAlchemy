@@ -2,7 +2,7 @@
 import { Title } from "@/components/editor/Title";
 import EditorMain from "../components/editor/EditorMain";
 import { MenuBar } from "@/components/editor/MenuBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
   createDraft,
@@ -20,6 +20,8 @@ const EMPTY_DOC = {
 };
 export const EditorPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isNewDraft = location.pathname === "/editor/new";
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState<any>(EMPTY_DOC);
@@ -46,6 +48,10 @@ export const EditorPage = () => {
   useEffect(() => {
     const fetchDraft = async () => {
       try {
+        if (isNewDraft) {
+          setIsHydrating(false);
+          return;
+        }
         const res = await getLatestDraft();
 
         if (!res.success || !res.data) return;
@@ -102,9 +108,10 @@ export const EditorPage = () => {
 
     if (publishing) return;
 
-    const isContentEmpty = !content || content.content.length === 0;
+    const isContentEmpty = !content || !content.content || content.content.length === 0;
 
-    if (!title.trim() && !isContentEmpty) return;
+    // Only skip auto-save if BOTH title AND content are empty
+    if (!title.trim() && isContentEmpty) return;
 
     const timeout = setTimeout(async () => {
       try {
@@ -119,6 +126,7 @@ export const EditorPage = () => {
           setDraftId(res.data.id);
 
           setCreatingDraft(false);
+          navigate("/editor", { replace: true });
         } else if (draftId) {
           await updateDraft(draftId, { title, content: safeContent });
         }

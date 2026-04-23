@@ -36,6 +36,7 @@ export const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SigupPage />} />
 
+        <Route path="/editor/new" element={<EditorPage />} />
         <Route path="/editor" element={<EditorPage />} />
       </Routes>
     </>

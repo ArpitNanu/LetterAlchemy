@@ -20,7 +20,7 @@ export const LoginPage = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     dispatch({ type: "LOGIN_START" });
-    console.log("form", { email, password });
+    //console.log("form", { email, password });
     const userForm = {
       email: email,
       password: password,

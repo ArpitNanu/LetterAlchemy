@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 interface UserProfileProps {
   name: string;
   email: string;
@@ -7,7 +8,14 @@ interface UserProfileProps {
 }
 
 const UserDropdown = ({ name, email, avatarUrl }: UserProfileProps) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { state, dispatch } = useAuth();
+  const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
+    dispatch({ type: "LOGOUT" });
+    navigate("/login");
+  };
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,7 +73,10 @@ const UserDropdown = ({ name, email, avatarUrl }: UserProfileProps) => {
             </li>
 
             <li className="mt-1 border-t border-default-medium pt-1">
-              <button className="block w-full text-left p-2 hover:bg-neutral-tertiary-medium text-fg-danger rounded-md">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left p-2 hover:bg-neutral-tertiary-medium text-fg-danger rounded-md"
+              >
                 Sign out
               </button>
             </li>

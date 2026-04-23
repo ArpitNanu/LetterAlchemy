@@ -16,9 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* ✅ ADD THIS LINE */
-    "ignoreDeprecations": "6.0",
-
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

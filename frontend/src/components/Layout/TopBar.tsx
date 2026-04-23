@@ -20,7 +20,7 @@ export const TopBar = () => {
 
         <button
           onClick={() => {
-            navigate("/editor");
+            navigate("/editor/new");
           }}
           className="flex gap-1 cursor-pointer"
         >
