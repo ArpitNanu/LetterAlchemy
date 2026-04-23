@@ -160,6 +160,11 @@
 }
 
 /* to resevere the hard reset */
+.tiptap p {
+  margin-top: 0.5em !important;
+  margin-bottom: 0.5em !important;
+}
+
 .tiptap h1 {
   @apply text-3xl font-bold; 
   /* tailwind complier @apply */
@@ -183,4 +188,21 @@
 
 .tiptap h6 {
   @apply text-sm font-medium;
+}
+
+/* This targets the content inside the editor */
+.ProseMirror pre {
+  background: #f4f4f4; /* The light grey you wanted */
+  border-left: 3px solid #f36d33; /* Your orange accent */
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.ProseMirror pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
 }

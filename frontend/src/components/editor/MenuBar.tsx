@@ -82,10 +82,13 @@ export const MenuBar = () => {
       return editor.chain().focus().toggleHeading({ level: 6 }).run();
   };
   return (
-    <div className="control-group bg-gray-50 flex gap-2  justify-center items-center rounded-2xl p-2 h-min w-fit shadow-xl ring-white border-t-gray-200 border-l-gray-200 text-gray-500 border-b-gray-500 border-r-gray-500 hover:bg-white hover:text-gray-600 ">
-      <div className="button-group">
+    <div className="control-group bg-gray-50 flex gap-3.5  justify-between items-center rounded-2xl p-2 h-min w-fit shadow-lg hover:shadow-lg border-t-gray-200 border-l-gray-200 text-gray-500 border-b-gray-500 border-r-gray-500 hover:bg-white hover:text-gray-600 ">
+      <div className="button-group flex gap-1">
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black 
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isBold}
           onPressedChange={() => editor.chain().focus().toggleBold().run()} //button
@@ -96,7 +99,10 @@ export const MenuBar = () => {
         </Toggle>
 
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isItalic}
           onPressedChange={() => editor.chain().focus().toggleItalic().run()}
@@ -105,7 +111,10 @@ export const MenuBar = () => {
           <Italic className="h-4 w-4" />
         </Toggle>
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isStrike}
           onPressedChange={() => editor.chain().focus().toggleStrike().run()}
@@ -114,16 +123,22 @@ export const MenuBar = () => {
           <Strikethrough className="h-4 w-4" />
         </Toggle>
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
-          pressed={editorState.isCode}
-          onPressedChange={() => editor.chain().focus().toggleCode().run()}
-          disabled={!editorState.canCode}
+          pressed={editor.isActive("codeBlock")}
+          onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
+           disabled={!editorState.canCode}
         >
           <Code />
         </Toggle>
         <Button
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().unsetAllMarks().run()}
@@ -131,7 +146,10 @@ export const MenuBar = () => {
           <Eraser className="h-4 w-4" />
         </Button>
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-g  ray-200 data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isParagraph}
           onPressedChange={() => editor.chain().focus().setParagraph().run()}
@@ -169,7 +187,10 @@ export const MenuBar = () => {
         </DropdownMenu>
 
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 d ata-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isBulletList}
           onPressedChange={() =>
@@ -179,7 +200,10 @@ export const MenuBar = () => {
           <List h-4 w-4 />
         </Toggle>
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200  data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isOrderedList}
           onPressedChange={() =>
@@ -189,7 +213,10 @@ export const MenuBar = () => {
           <ListOrdered />
         </Toggle>
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200     data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isCodeBlock}
           onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -198,7 +225,10 @@ export const MenuBar = () => {
         </Toggle>
 
         <Toggle
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200     data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           pressed={editorState.isBlockquote}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
@@ -206,7 +236,10 @@ export const MenuBar = () => {
           <blockquote className="w-4 h-4" />
         </Toggle>
         <Button
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           variant="ghost"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
@@ -214,7 +247,10 @@ export const MenuBar = () => {
           <GitCommitHorizontal />
         </Button>
         <Button
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200  data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           size="sm"
           variant="ghost"
           onClick={() => editor.chain().focus().setHardBreak().run()}
@@ -222,7 +258,10 @@ export const MenuBar = () => {
           <CornerDownLeft />
         </Button>
         <Button
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5 "
           variant="ghost"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editorState.canUndo}
@@ -230,7 +269,11 @@ export const MenuBar = () => {
           <Undo />
         </Button>
         <Button
-          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200 data-[state=on]:text-black"
+          className=" hover:shadow-md hover:-translate-y-0.5 hover:border-t-gray-100  hover:border-l-gray-100 hover:border-r-gray-200 hover:border-b-gray-200  data-[state=on]:text-[#666]
+    data-[state=on]:bg-gray-100
+    data-[state=on]:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]
+    data-[state=on]:translate-y-0.5
+     "
           variant="ghost"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editorState.canRedo}
