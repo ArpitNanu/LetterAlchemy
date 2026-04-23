@@ -25,9 +25,7 @@ export const App = () => {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
+              <Dashboard />
               //bcuz it's like bouncer for dashboard
             }
           />
