@@ -86,7 +86,7 @@ posts.get("/posts/latest", async (c) => {
     return c.json({ msg: "internal server error" }, 500);
   }
 });
-
+//get all users posts
 posts.get("/posts", async (c) => {
   const prisma = getPrisma(c.env);
   const userId = Number(c.get("userId"));
@@ -105,6 +105,7 @@ posts.get("/posts", async (c) => {
         createdAt: true,
         likes: true,
         comments: true,
+        published: true,
       },
     });
     return c.json({
@@ -294,7 +295,7 @@ posts.patch("/publish/:id", async (c) => {
   try {
     // We verify the post belongs to the user before publishing
     const post = await prisma.post.findFirst({
-      where: { id: postId, authorId: userId }
+      where: { id: postId, authorId: userId },
     });
 
     if (!post) return c.json({ msg: "Post not found" }, 404);
@@ -311,4 +312,3 @@ posts.patch("/publish/:id", async (c) => {
 });
 
 export default posts;
-  

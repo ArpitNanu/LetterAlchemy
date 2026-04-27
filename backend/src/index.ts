@@ -12,13 +12,23 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.use(
   "*",
-  cors({
-    origin: "http://localhost:5173",
-    allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    exposeHeaders: ["Content-Length", "Authorization"],
-    credentials: true,
-  }),
+  async (c, next) => {
+    const corsMiddleware = cors({
+      origin: (origin) => {
+        // Allow local development and the production frontend URL
+        if (origin === "http://localhost:5173" || origin === c.env.FRONTEND_URL) {
+          return origin;
+        }
+        // Fallback to production URL if origin is missing (rare)
+        return c.env.FRONTEND_URL;
+      },
+      allowHeaders: ["Content-Type", "Authorization"],
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      exposeHeaders: ["Content-Length", "Authorization"],
+      credentials: true,
+    });
+    return corsMiddleware(c, next);
+  }
 );
 
 app.get("/", (c) => c.text("hono!"));
