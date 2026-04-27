@@ -9,6 +9,7 @@ import { HomePage } from "./pages/HomePage";
 import { Layout } from "./components/Layout/Layout";
 import { Bookmark } from "./components/Bookmark";
 import { Profile } from "./components/Profile";
+import { ReaderPage } from "./pages/ReaderPage";
 
 export const App = () => {
   return (
@@ -31,10 +32,14 @@ export const App = () => {
         </Route>
 
         <Route path="/login" element={<LoginPage />} />
+
         <Route path="/signup" element={<SigupPage />} />
 
         <Route path="/editor/new" element={<EditorPage />} />
+
         <Route path="/editor" element={<EditorPage />} />
+
+        {<Route path="/reader" element={<ReaderPage />} />}
       </Routes>
     </>
   );
