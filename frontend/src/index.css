@@ -3,149 +3,148 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+/* ----------------------------- */
+/* 🌙 Dark mode selector */
+/* ----------------------------- */
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: "Geist Variable", sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+/* ----------------------------- */
+/* 🎨 DESIGN TOKENS (TAILWIND USES THESE) */
+/* ----------------------------- */
+@theme {
+  /* Layout */
+  --color-page-bg: #f4fafd;
+  --color-sidebar-bg: #fcf8fb;
+  --color-essay-bg: #fdfcfb;
+  --color-surface: #ffffff;
+
+  /* Brand */
+  --color-brand-primary: #4a6741;
+  --color-brand-highlight: #688c5b;
+  --color-brand-surface: #f1f6f0;
+
+  /* Dashboard */
+  --color-stat-likes-bg: #f1f6f0;
+  --color-stat-comments-bg: #eef5f7;
+  --color-stat-time-bg: #fff9f2;
+  --color-stat-views-bg: #f4f7ff;
+
+  /* Text */
+  --color-text-main: #1a1a1a;
+  --color-text-muted: #666666;
+  --color-border-subtle: #e5e7eb;
+
+  /* Status */
+  --color-status-published: #4a6741;
+  --color-status-draft: #9ca3af;
+  --color-status-scheduled: #d97706;
 }
 
+/* ----------------------------- */
+/* 🌙 DARK MODE OVERRIDES */
+/* ----------------------------- */
+.dark {
+  --color-page-bg: #0f0f0f;
+  --color-sidebar-bg: #080808;
+  --color-essay-bg: #141414;
+  --color-surface: #1a1a1a;
+
+  --color-brand-primary: #88a87d;
+  --color-brand-highlight: #a3c298;
+  --color-brand-surface: #1e231d;
+
+  --color-stat-likes-bg: #1a2118;
+  --color-stat-comments-bg: #141b21;
+  --color-stat-time-bg: #211c14;
+  --color-stat-views-bg: #161921;
+
+  --color-text-main: #f3f4f6;
+  --color-text-muted: #9ca3af;
+  --color-border-subtle: #262626;
+}
+
+/* ----------------------------- */
+/* 🔗 OPTIONAL: shadcn mapping */
+/* ----------------------------- */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: var(--color-page-bg);
+  --foreground: var(--color-text-main);
+
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text-main);
+
+  --primary: var(--color-brand-primary);
+  --primary-foreground: #ffffff;
+
+  --secondary: var(--color-brand-surface);
+  --secondary-foreground: var(--color-text-main);
+
+  --muted: var(--color-brand-surface);
+  --muted-foreground: var(--color-text-muted);
+
+  --accent: var(--color-brand-highlight);
+  --accent-foreground: #ffffff;
+
+  --border: var(--color-border-subtle);
+  --input: var(--color-border-subtle);
+  --ring: var(--color-brand-highlight);
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: var(--color-page-bg);
+  --foreground: var(--color-text-main);
+
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text-main);
+
+  --primary: var(--color-brand-primary);
+  --primary-foreground: #000000;
+
+  --secondary: var(--color-brand-surface);
+  --secondary-foreground: var(--color-text-main);
+
+  --muted: var(--color-brand-surface);
+  --muted-foreground: var(--color-text-muted);
+
+  --accent: var(--color-brand-highlight);
+  --accent-foreground: #000000;
+
+  --border: var(--color-border-subtle);
+  --input: var(--color-border-subtle);
+  --ring: var(--color-brand-highlight);
 }
 
+/* ----------------------------- */
+/* 🧱 BASE STYLES */
+/* ----------------------------- */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--color-border-subtle);
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-page-bg text-text-main;
   }
+
   html {
-    @apply font-sans;
+    font-family: "Geist Variable", sans-serif;
   }
 }
 
-/* 1. Target the line inside the prose editor */
+/* ----------------------------- */
+/* ✍️ TIPTAP / PROSE */
+/* ----------------------------- */
+
 .prose hr {
   @apply my-12 border-none h-0.5 bg-slate-200 relative overflow-visible block;
 }
 
-/* 2. Create the dot */
 .prose hr::after {
-  /* This 'content' is the magic spell—it MUST stay here */
   content: "";
-
-  /* Positioning the boat */
   @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
-
-  /* Shaping the boat */
   @apply w-3 h-3 rounded-full bg-slate-400 border-2 border-white block;
-
-  /* Ensuring it sits ON TOP of the line */
   z-index: 10;
 }
 
@@ -159,42 +158,34 @@
   padding-left: 1.5rem;
 }
 
-/* to resevere the hard reset */
 .tiptap p {
   margin-top: 0.5em !important;
   margin-bottom: 0.5em !important;
 }
 
 .tiptap h1 {
-  @apply text-3xl font-bold; 
-  /* tailwind complier @apply */
+  @apply text-3xl font-bold;
 }
-
 .tiptap h2 {
   @apply text-2xl font-semibold;
 }
-
 .tiptap h3 {
   @apply text-xl font-semibold;
 }
-
 .tiptap h4 {
   @apply text-lg font-medium;
 }
-
 .tiptap h5 {
   @apply text-base font-medium;
 }
-
 .tiptap h6 {
   @apply text-sm font-medium;
 }
 
-/* This targets the content inside the editor */
 .ProseMirror pre {
-  background: #f4f4f4; /* The light grey you wanted */
-  border-left: 3px solid #f36d33; /* Your orange accent */
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: #f4f4f4;
+  border-left: 3px solid #f36d33;
+  font-family: "JetBrains Mono", monospace;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   margin: 1rem 0;

@@ -20,7 +20,7 @@ const EditorMain = ({ editor }: Props) => {
         />
       </div>
 
-      <FloatingMenu editor={editor}>Floating menu</FloatingMenu>
+      {/* <FloatingMenu editor={editor}>Floating menu</FloatingMenu> */}
 
       <BubbleMenu editor={editor}>
   <div className="flex gap-3 bg-white shadow-md px-2 py-1 rounded-lg">

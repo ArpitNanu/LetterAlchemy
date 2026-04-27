@@ -1,7 +1,7 @@
 import { LoginPage } from "./pages/LoginPage";
 import { Route, Routes } from "react-router-dom";
 import { SigupPage } from "./pages/SignupPage";
-import { Dashboard } from "./pages/Dashboard";
+import { Dashboard } from "./pages/DashboardPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import { EditorPage } from "./pages/EditorPage";
@@ -21,7 +21,6 @@ export const App = () => {
 
           {/* make book,pro, dash, protected later,*/}
           <Route path="/profile" element={<Profile />} />
-
           <Route
             path="/dashboard"
             element={

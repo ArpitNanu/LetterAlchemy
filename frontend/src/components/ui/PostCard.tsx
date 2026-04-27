@@ -24,7 +24,7 @@ export const PostCard = ({ posts }:PostcardProp) => {
                       {post.title}
                     </h2>
                     <p className="text-md text-gray-500  text-body ">
-                      {post.text}
+                      {/* {post.text} */}
                     </p>
                   </div>
                 </div>

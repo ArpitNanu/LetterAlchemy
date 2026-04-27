@@ -1,6 +1,6 @@
 import { SideBar } from "@/components/Layout/SideBar";
 import { TopBar } from "@/components/Layout/TopBar";
-import { HomePage } from "@/pages/HomePage";
+import { Outlet } from "react-router-dom";
 
 export const Layout = () => {
   return (
@@ -13,7 +13,7 @@ export const Layout = () => {
           <SideBar />
         </nav>
         <main className="">
-          <HomePage />
+          <Outlet />
         </main>
       </div>
     </div>

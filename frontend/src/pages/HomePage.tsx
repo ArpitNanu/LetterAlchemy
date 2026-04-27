@@ -1,6 +1,9 @@
 import { getPublicPost } from "@/api/postApi";
+import { RecommdeationRightSideBar } from "@/components/Home/RecommdeationRightSideBar";
 import PostCard from "@/components/ui/PostCard";
 import { useEffect, useState } from "react";
+
+
 
 export const HomePage = () => {
   const [post, setPost] = useState([]);
@@ -15,11 +18,13 @@ export const HomePage = () => {
     publicPost();
   }, []);
   return (
-    <div className=" flex h-full">
+    <div className=" grid grid-cols-[3fr_1fr] h-screen ">
       <div className="flex-1">
         <PostCard posts={post} />
       </div>
-      <aside className="w-80">rightsidddfebar</aside>
+      <aside>
+        <RecommdeationRightSideBar />
+      </aside>
     </div>
   );
 };

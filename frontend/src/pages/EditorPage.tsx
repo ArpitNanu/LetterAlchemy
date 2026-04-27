@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEditor, EditorContext } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { Logo } from "@/components/Logo";
 
 const EMPTY_DOC = {
   type: "doc",
@@ -32,12 +33,17 @@ export const EditorPage = () => {
   const [isHydrating, setIsHydrating] = useState(true);
   const [publishing, setPublishing] = useState(false);
 
- // Track if we have already loaded the draft into the editor instance
+  // Track if we have already loaded the draft into the editor instance
   const hasHydratedEditor = useRef(false);
 
   const editor = useEditor({
     extensions: [StarterKit],
     content: EMPTY_DOC,
+    editorProps: {
+      attributes: {
+        class: "focus:outline-none",
+      },
+    },
     onUpdate({ editor }) {
       setContent(editor.getJSON());
     },
@@ -72,8 +78,8 @@ export const EditorPage = () => {
     fetchDraft();
   }, []);
 
- // 2. Load the fetched content into Tiptap ONCE
-  // We don't want to call setContent on every 'content' state change, 
+  // 2. Load the fetched content into Tiptap ONCE
+  // We don't want to call setContent on every 'content' state change,
   // because that would reset the user's cursor while typing.
   useEffect(() => {
     if (editor && !isHydrating && !hasHydratedEditor.current) {
@@ -88,10 +94,10 @@ export const EditorPage = () => {
     if (!draftId) return;
     setPublishing(true);
     try {
-      // Important: Save the latest content immediately before publishing 
+      // Important: Save the latest content immediately before publishing
       // to ensure the 500ms debounce doesn't miss the last keystroke.
       await updateDraft(draftId, { title, content });
-      
+
       // Perform the publish action
       await publishingDraft(draftId);
       navigate(`/post/${draftId}`);
@@ -102,13 +108,13 @@ export const EditorPage = () => {
     }
   };
 
-
   useEffect(() => {
     if (isHydrating) return;
 
     if (publishing) return;
 
-    const isContentEmpty = !content || !content.content || content.content.length === 0;
+    const isContentEmpty =
+      !content || !content.content || content.content.length === 0;
 
     // Only skip auto-save if BOTH title AND content are empty
     if (!title.trim() && isContentEmpty) return;
@@ -144,23 +150,23 @@ export const EditorPage = () => {
     <EditorContext.Provider value={providerValue}>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-3xl mx-auto px-6 pt-10 space-y-4">
-          <div className="flex justify-center mb-4 sticky top-0 z-10 bg-gray-50 py-2">
+          <div className="flex justify-center items-center mb-4 sticky top-0 z-10 bg-gray-50 py-2 gap-4">
+            <Logo className="w-6 h-6 text-brand-primary" />
             <MenuBar />
-          </div>
-
-          <Title value={title} handleTitleChange={setTitle} />
-
-          <EditorMain editor={editor} />
-
-          <div className="mt-6 flex justify-end">
             <Button
-              className=" cursor-pointer"
+              className=" cursor-pointer bg-brand-highlight border-brand-primary text-black text-md hover:bg-brand-primary hover:text-green-50 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
               onClick={handlePublished}
               disabled={publishing}
             >
               Publish
             </Button>
           </div>
+
+          <Title value={title} handleTitleChange={setTitle} />
+
+          <EditorMain editor={editor} />
+
+          <div className="mt-6 flex justify-end"></div>
         </div>
       </div>
     </EditorContext.Provider>
