@@ -78,7 +78,7 @@ export const LoginPage = () => {
               className={`rounded-xl p-2 cursor-pointer text-white ${
                 state.isLoading
                   ? "bg-gray-400"
-                  : "bg-blue-500 hover:bg-blue-600"
+                  : "bg-brand-primary hover:bg-brand-primary/90"
               }`}
             >
               Sign in

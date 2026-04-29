@@ -32,3 +32,17 @@ export const getPublicPost = async () => {
   return res.data;
 };
 
+export const getPostById = async (id: string | undefined) => {
+  if (!id) return { success: false, msg: "No ID provided" };
+  const res = await apiClient.get(`/posts/${id}`);
+  return res.data;
+};
+
+export const getPublicPostById = async (id: string | undefined) => {
+  if (!id) return { success: false, msg: "No ID provided" };
+  const res = await apiClient.get(`/public/${id}`);
+  return res.data;
+};
+
+
+

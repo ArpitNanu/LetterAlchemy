@@ -39,7 +39,7 @@ export const App = () => {
 
         <Route path="/editor" element={<EditorPage />} />
 
-        {<Route path="/reader" element={<ReaderPage />} />}
+        {<Route path="/post/:id" element={<ReaderPage />} />}
       </Routes>
     </>
   );
