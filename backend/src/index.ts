@@ -3,6 +3,7 @@ import { Env } from "./types/env";
 import auth from "./routes/auth";
 import posts from "./routes/posts";
 import promptAi from "./routes/promptAi";
+import users from "./routes/users";
 import { authmiddleware } from "./middleware/auth.middleware";
 import { ScheduledEvent, ExecutionContext } from "@cloudflare/workers-types";
 import { getPrisma } from "./db/prisma";
@@ -37,6 +38,7 @@ app.get("/", (c) => c.text("hono!"));
 app.route("/api/v1", auth);
 app.route("/api/v1", posts);
 app.route("/api/v1/prompts", promptAi);
+app.route("/api/v1/users", users);
 
 app.onError((err, c) => {
   console.error(`ERROR: ${err.message}`);
