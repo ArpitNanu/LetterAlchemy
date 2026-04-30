@@ -8,7 +8,7 @@ import { EditorPage } from "./pages/EditorPage";
 import { HomePage } from "./pages/HomePage";
 import { Layout } from "./components/Layout/Layout";
 import { Bookmark } from "./components/Bookmark";
-import { Profile } from "./components/Profile";
+import { Profile } from "./pages/Profile";
 import { ReaderPage } from "./pages/ReaderPage";
 
 export const App = () => {
