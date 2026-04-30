@@ -12,7 +12,8 @@ const posts = new Hono<{
 }>();
 
 posts.use("*", async (c, next) => {
-  if (c.req.path.endsWith("/public")) {
+// added || c.req.path.includes("/prompts") to bypass auth!
+  if (c.req.path.includes("/public") || c.req.path.includes("/prompts")) {
     return await next();
   }
   return await authmiddleware(c, next);
@@ -168,6 +169,53 @@ posts.get("/public", async (c) => {
     return c.json({ msg: "internal server error" }, 500);
   }
 });
+
+// Public route to fetch a single post by ID
+posts.get("/public/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const postId = Number(c.req.param("id"));
+
+  try {
+    const post = await prisma.post.findFirst({
+      where: {
+        id: postId,
+        published: true, // only show published posts to the public
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        author: {
+          select: {
+            id: true, // Added author ID for the ReaderPage
+            firstName: true,
+            lastName: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+      },
+    });
+
+    if (!post) {
+      return c.json({ msg: "Post not found or not published" }, 404);
+    }
+
+    return c.json({
+      success: true,
+      data: post,
+    });
+  } catch (error) {
+    console.error(error);
+    return c.json({ msg: "Internal server error" }, 500);
+  }
+});
 posts.patch("/edit/:id", async (c) => {
   const prisma = getPrisma(c.env);
   const userId = Number(c.get("userId"));
@@ -260,11 +308,18 @@ posts.get("/posts/:id", async (c) => {
         id: true,
         title: true,
         content: true,
+        updatedAt:true,
         author: {
           select: {
             firstName: true,
             lastName: true,
           },
+        },
+        _count:{
+          select:{
+            likes:true,
+            comments:true,
+          }
         },
       },
     });

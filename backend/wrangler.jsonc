@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-01-05",
   "triggers": {
-    "crons": ["* * * * *"],
+    "crons": ["0 0 * * *"], // This means it will run exactly once every day at midnight (00:00)
   },
   // "compatibility_flags": [
   //   "nodejs_compat"
