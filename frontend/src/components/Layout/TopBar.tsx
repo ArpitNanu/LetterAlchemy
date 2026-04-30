@@ -8,8 +8,11 @@ export const TopBar = () => {
     <div>
       <div className="flex justify-between items-center m-2 border-2 border-t-0 border-l-0 border-r-0 border-b-border-subtle">
         <div className=" flex gap-1 cursor-pointer items-center ">
-          <BookOpen className="text-brand-primary" />
+          <button className="flex items-center gap-1 cursor-pointer" onClick={() => navigate("/")}>
+            <BookOpen className="text-brand-primary" />
           <h1 className="text-2xl font-serif font-bold text-brand-primary">LetterAlchemy</h1>
+          </button>
+          
         </div>
         <div className="flex rounded-4xl  bg-gray-100">
           <Search className="top-3 m-3" />

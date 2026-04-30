@@ -38,6 +38,15 @@
   --color-status-published: #4a6741;
   --color-status-draft: #9ca3af;
   --color-status-scheduled: #d97706;
+
+  /* Landing Page Chart Bars (Extracted from Figma) */
+  --color-chart-1: #e4e4e4;
+  --color-chart-2: #d9e0d7;
+  --color-chart-3: #e8e8e8;
+  --color-chart-4: #a8bba1;
+  --color-chart-5: #7d9675;
+  --color-chart-6: var(--color-brand-primary);
+  --color-chart-7: #e5e7eb;
 }
 
 /* ----------------------------- */

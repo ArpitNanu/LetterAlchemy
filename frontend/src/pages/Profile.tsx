@@ -32,7 +32,7 @@ export const Profile = () => {
   // 3. LOGIC: Handling the Sign Out (clears token and redirects to login)
   const handleSignOut = () => {
     localStorage.removeItem("token"); // Destroy the JWT token locally
-    navigate("/signin"); // Send the user back to the login screen
+    navigate("/login"); // Send the user back to the login screen
   };
 
   // 4. LOADING STATE: Show something nice while we wait for the backend

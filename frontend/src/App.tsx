@@ -10,13 +10,15 @@ import { Layout } from "./components/Layout/Layout";
 import { Bookmark } from "./components/Bookmark";
 import { Profile } from "./pages/Profile";
 import { ReaderPage } from "./pages/ReaderPage";
+import { LandingPage } from "./pages/LandingPage";
 
 export const App = () => {
   return (
     <>
       <Routes>
+        <Route path="/" index element={<LandingPage />} />
         <Route element={<Layout />}>
-          <Route path="/" index element={<HomePage />} />
+          <Route path="/home" index element={<HomePage />} />
 
           <Route path="/bookmark" element={<Bookmark />} />
 
