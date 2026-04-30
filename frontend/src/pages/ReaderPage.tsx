@@ -1,4 +1,4 @@
-import { AiChatbox } from "@/components/AI/AiChatbox";
+import { AiChatbox } from "@/components/Layout/AI/AiChatbox";
 import { CommentInput } from "@/components/ui/CommentInput";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";

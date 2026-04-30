@@ -44,5 +44,10 @@ export const getPublicPostById = async (id: string | undefined) => {
   return res.data;
 };
 
+export const getAiPrompts = async () => {
+  const res = await apiClient.get("/prompts");
+  return res.data;
+};
+
 
 

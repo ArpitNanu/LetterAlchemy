@@ -18,11 +18,11 @@ export const HomePage = () => {
     publicPost();
   }, []);
   return (
-    <div className=" grid grid-cols-[3fr_1fr] h-screen ">
-      <div className="flex-1">
+    <div className="grid grid-cols-[3fr_1fr] h-full overflow-hidden">
+      <div className="overflow-y-auto pr-2 pb-10">
         <PostCard posts={post} />
       </div>
-      <aside>
+      <aside className="overflow-hidden">
         <RecommdeationRightSideBar />
       </aside>
     </div>

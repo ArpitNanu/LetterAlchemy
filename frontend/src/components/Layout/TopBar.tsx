@@ -1,4 +1,4 @@
-import { BookOpen, Menu, Search, SquarePen } from "lucide-react";
+import { BookOpen, Search, SquarePen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UserDropdown from "../ui/UserDropdown";
 
