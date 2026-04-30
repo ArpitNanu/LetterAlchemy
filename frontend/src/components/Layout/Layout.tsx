@@ -8,8 +8,9 @@ export const Layout = () => {
       <header className="">
         <TopBar />
       </header>
+
       <div className="grid grid-cols-[200px_minmax(900px,1fr)] h-screen ">
-        <nav className="">
+        <nav className="border-2 border-t-0 border-l-0 border-b-0 border-r-border-subtle">
           <SideBar />
         </nav>
         <main className="">

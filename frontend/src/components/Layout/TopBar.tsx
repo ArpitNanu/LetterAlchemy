@@ -1,4 +1,4 @@
-import { Menu, Search, SquarePen } from "lucide-react";
+import { BookOpen, Menu, Search, SquarePen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UserDropdown from "../ui/UserDropdown";
 
@@ -6,9 +6,11 @@ export const TopBar = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <div className="flex justify-between m-2  items-center border-gray-50 border-2">
-        <Menu />
-        <h1>LetterAlchemy</h1>
+      <div className="flex justify-between items-center m-2 border-2 border-t-0 border-l-0 border-r-0 border-b-border-subtle">
+        <div className=" flex gap-1 cursor-pointer items-center ">
+          <BookOpen className="text-brand-primary" />
+          <h1 className="text-2xl font-serif font-bold text-brand-primary">LetterAlchemy</h1>
+        </div>
         <div className="flex rounded-4xl  bg-gray-100">
           <Search className="top-3 m-3" />
           <input

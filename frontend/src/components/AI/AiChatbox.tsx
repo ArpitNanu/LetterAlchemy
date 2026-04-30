@@ -1,9 +1,9 @@
-import { Bot, SparkleIcon } from "lucide-react";
+import { Bot } from "lucide-react";
 import { SparkAi } from "../ui/SparkAi";
 
 export const AiChatbox = () => {
   return (
-    <div className="bg-sidebar-bg border border-border-subtle rounded-md p-4 h-full">
+    <div className="bg-sidebar-bg border border-border-subtle rounded-md p-4 h-full ">
       <div className="flex gap-1">
         <Bot />
         <p>Alchemist AI </p>

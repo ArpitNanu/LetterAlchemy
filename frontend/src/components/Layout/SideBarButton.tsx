@@ -11,7 +11,7 @@ export const SideBarButton = ({
 }) => {
   const navigate = useNavigate();
   return (
-    <div onClick={() => navigate(path)} className="flex gap-2 cursor-pointer">
+    <div onClick={() => navigate(path)} className="flex items-center gap-2 w-full p-2 rounded-sm cursor-pointer hover:bg-[#caecbc] hover:text-brand-primary">
       <span>{icon}</span>
       <span>{name}</span>
     </div>

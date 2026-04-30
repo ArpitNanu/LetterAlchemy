@@ -33,7 +33,7 @@ export const ReaderPage = () => {
     content: null,
     editorProps: {
       attributes: {
-        class: "focus:outline-none",
+        class: "focus:outline-none", // add custom tailwind classes for editor container
       },
     },
   });
