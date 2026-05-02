@@ -1,84 +1,134 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { HeaderRow } from "@/components/Dashboard/HeaderRow";
 import { BlogRow } from "@/components/Dashboard/BlogTable";
 import { Card } from "@/components/Dashboard/StatisticsCard";
+import { getUserProfile } from "@/api/UserApi";
+import { getAllUserPosts, deletePost } from "@/api/postApi";
 import {
   Heart,
   MessageCircle,
   MessageSquareCheck,
-  MessagesSquare,
   StickyNote,
 } from "lucide-react";
 
-const blogs = [
-  {
-    id: 1,
-    title: "React Hooks Guide",
-    status: "Draft",
-    likes: 12,
-    comments: 3,
-  },
-  {
-    id: 2,
-    title: "AI Future Trends",
-    status: "Published",
-    likes: 45,
-    comments: 10,
-  },
-];
 export const Dashboard = () => {
   const { state } = useAuth();
-  const navigator = useNavigate();
+  const navigate = useNavigate();
+  const [stats, setStats] = useState<any>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        
+        // Parallel fetching for better performance
+        const [statsData, postsData] = await Promise.all([
+          getUserProfile(),
+          getAllUserPosts()
+        ]);
+
+        if (statsData.success) {
+          setStats(statsData.data.stats);
+        }
+
+        if (postsData.success) {
+          setPosts(postsData.data);
+        }
+      } catch (error) {
+        console.error("Dashboard Data Fetch Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const handleDeletePost = async (id: number) => {
+    try {
+      const res = await deletePost(id);
+      if (res.success) {
+        // Optimistic UI update for the post list
+        setPosts((prev) => prev.filter((post) => post.id !== id));
+        
+        // Re-fetch stats to update the counter cards
+        const statsData = await getUserProfile();
+        if (statsData.success) {
+          setStats(statsData.data.stats);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+    }
+  };
+
+  if (loading) {
+    return <div className="p-8 text-text-muted animate-pulse font-serif">Aligning the sanctuary...</div>;
+  }
+
   return (
-    <div className="bg-blue-50 min-h-screen p-6 rounded-xl m-4 ">
+    <div className="bg-essay-bg min-h-screen p-6 rounded-xl m-4 overflow-y-auto">
       <h2 className="text-2xl font-bold text-brand-primary mb-1">
-        Your Sancatury
+        Your Sanctuary
       </h2>
       <h1 className="text-xl text-text-muted mb-6">
-        {" "}
-        Welcome, {state.user?.firstName || "writer"}
+        Welcome back, {state.user?.firstName || "Alchemist"}
       </h1>
 
-      <div className="grid grid-cols-4 gap-4 ">
-        <Card icon={<Heart />} description="COMMENTS" />
-        <Card icon={<MessageCircle />} description="MESSAGES" />
-        <Card icon={<StickyNote />} description="NOTES" />
-        <Card icon={<MessageSquareCheck />} description="CHECKS" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
+        <Card 
+          icon={<Heart className="text-red-500" />} 
+          title={stats?.totalLikes?.toString() || "0"} 
+          description="TOTAL LIKES" 
+        />
+        <Card 
+          icon={<MessageCircle className="text-blue-500" />} 
+          title={stats?.totalComments?.toString() || "0"} 
+          description="TOTAL COMMENTS" 
+        />
+        <Card 
+          icon={<StickyNote className="text-amber-500" />} 
+          title={stats?.drafts?.toString() || "0"} 
+          description="DRAFTS" 
+        />
+        <Card 
+          icon={<MessageSquareCheck className="text-brand-primary" />} 
+          title={stats?.published?.toString() || "0"} 
+          description="PUBLISHED" 
+        />
       </div>
+
       <div className="flex items-center justify-between mt-8">
         <div className="text-2xl font-bold">
-          <p>Post</p>
-          <p> Management</p>
+          <p className="text-text-main">Post</p>
+          <p className="text-text-main">Management</p>
         </div>
         <button
-          className="bg-brand-primary text-white hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none rounded-xl cursor-pointer"
-          onClick={() => navigator("/editor")}
+          className="bg-brand-primary text-white hover:bg-brand-strong transition-colors font-medium rounded-xl text-sm px-6 py-2.5 cursor-pointer shadow-sm"
+          onClick={() => navigate("/editor/new")}
         >
           New Post
         </button>
       </div>
-      <div className="bg-white mt-4 rounded-2xl border border-subtle">
+
+      <div className="bg-surface mt-4 rounded-2xl border border-border-subtle overflow-hidden">
         <HeaderRow />
-        {blogs.map((blog) => (
-          <BlogRow key={blog.id} blog={blog} />
-        ))}
+        <div className="divide-y divide-border-subtle">
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <BlogRow key={post.id} blog={post} onDelete={handleDeletePost} />
+            ))
+          ) : (
+            <div className="p-10 text-center text-text-muted italic">
+              No ink spilled yet. Start your first masterpiece!
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
-
-// still confuse b/w usenavigate and navigate
-
-// const totalPosts = blogs.length;
-
-// const published = blogs.filter(b => b.published).length;
-
-// const totalLikes = blogs.reduce((acc, b) => acc + b.likes, 0);
-
-// const totalComments = blogs.reduce((acc, b) => acc + b.comments, 0);
-
-//📄 Total Posts        → count
-// 🚀 Published Posts    → filter(published)
-// ❤️ Total Likes        → sum
-// 💬 Total Comments     → sum

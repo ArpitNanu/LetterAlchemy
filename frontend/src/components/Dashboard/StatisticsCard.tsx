@@ -14,7 +14,7 @@ export const Card = ({
       <div className="pb-3">
         {icon}
       </div>
-      <h2 className="text-3xl ">{title} 2482</h2>
+      <h2 className="text-3xl ">{title}</h2>
       <p className="text-xs text-text-muted">{description} </p>
     </div>
   );

@@ -34,7 +34,7 @@ export const LoginPage = () => {
           token: data.token,
         },
       });
-      navigate("/");
+      navigate("/home");
     } catch (error: any) {
       const message = error.response?.data?.message || "Login Failed";
       dispatch({ type: "LOGIN_FAILED", payload: message });

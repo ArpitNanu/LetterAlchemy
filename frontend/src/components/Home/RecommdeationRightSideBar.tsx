@@ -37,7 +37,7 @@ export const RecommdeationRightSideBar = () => {
   }, []);
 
   return (
-    <div className="bg-[#EEF5F7] border-l border-border-subtle h-full p-6 flex flex-col">
+    <div className="bg-sidebar-bg border-l border-border-subtle h-full p-6 flex flex-col">
       {/* STICKY HEADER AREA */}
       <div className="shrink-0">
         <div className="flex items-center gap-2 mb-2">
@@ -58,7 +58,7 @@ export const RecommdeationRightSideBar = () => {
           {prompts.map((prompt, index) => (
             <div 
               key={index} 
-              className="bg-white border border-border-subtle p-4 rounded-md shadow-sm cursor-pointer hover:border-brand-primary hover:shadow-md transition-all"
+              className="bg-surface border border-border-subtle p-4 rounded-md shadow-sm cursor-pointer hover:border-brand-primary hover:shadow-md transition-all"
             >
               <p className="font-serif italic text-text-primary text-sm leading-relaxed">
                 "{prompt}"

@@ -49,5 +49,23 @@ export const getAiPrompts = async () => {
   return res.data;
 };
 
+export const getAllUserPosts = async () => {
+  const res = await apiClient.get("/posts");
+  return res.data;
+};
 
+export const deletePost = async (id: number) => {
+  const res = await apiClient.delete(`/posts/${id}`);
+  return res.data;
+};
+
+export const toggleLike = async (id: string | number) => {
+  const res = await apiClient.post(`/like/${id}`);
+  return res.data;
+};
+
+export const toggleBookmark = async (id: string | number) => {
+  const res = await apiClient.post(`/bookmark/${id}`);
+  return res.data;
+};
 

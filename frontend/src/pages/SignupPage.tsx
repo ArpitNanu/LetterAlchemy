@@ -47,7 +47,7 @@ export const SigupPage = () => {
             user: data.user,
           },
         });
-        navigate("/");
+        navigate("/home");
       }
     } catch (error) {
       console.log("Signup error", error);

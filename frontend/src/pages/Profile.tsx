@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "@/hooks/useTheme";
 // We import Lucide icons to closely match your Figma design
 import { Pencil, FileText, CheckCircle, BookOpen, LogOut, Sun, Moon } from "lucide-react";
 import apiClient from "@/lib/api"; // Your configured axios instance
@@ -6,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export const Profile = () => {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme(); // 🎓 Our custom hook — gives us isDark (boolean) and toggle (function)
   
   // 1. STATE: We create state variables to hold our backend data
   const [profileData, setProfileData] = useState<any>(null);
@@ -65,7 +67,7 @@ export const Profile = () => {
         <div className="flex flex-col gap-8">
           
           {/* CARD 1: USER IDENTITY */}
-          <div className="bg-white border border-border-subtle rounded-xl p-6 relative shadow-sm">
+          <div className="bg-surface border border-border-subtle rounded-xl p-6 relative shadow-sm">
             {/* Edit Button in top right */}
             <button className="absolute top-6 right-6 text-text-muted hover:text-brand-primary transition-colors">
               <Pencil className="w-5 h-5" />
@@ -92,15 +94,15 @@ export const Profile = () => {
                 
                 {/* Tags (Mocked for now as per Figma) */}
                 <div className="flex gap-2">
-                  <span className="px-3 py-1 bg-[#EEF5F7] text-brand-primary text-xs rounded-full">Architecture</span>
-                  <span className="px-3 py-1 bg-[#EEF5F7] text-brand-primary text-xs rounded-full">Design</span>
+                  <span className="px-3 py-1 bg-brand-surface text-brand-primary text-xs rounded-full">Architecture</span>
+                  <span className="px-3 py-1 bg-brand-surface text-brand-primary text-xs rounded-full">Design</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* CARD 2: READING PREFERENCES (Frontend Only UI for now) */}
-          <div className="bg-white border border-border-subtle rounded-xl p-6 shadow-sm">
+          <div className="bg-surface border border-border-subtle rounded-xl p-6 shadow-sm">
             <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
                Reading Preferences
             </h2>
@@ -111,12 +113,24 @@ export const Profile = () => {
                   <h3 className="text-sm font-bold text-text-primary">Interface Theme</h3>
                   <p className="text-xs text-text-muted">Switch between light and dark sanctuary modes.</p>
                 </div>
-                {/* Mocked Toggle Switch */}
-                <div className="flex bg-[#EEF5F7] rounded-full p-1">
-                  <button className="flex items-center gap-2 px-4 py-1.5 bg-white shadow-sm rounded-full text-xs font-bold text-text-primary">
+                {/* Theme Toggle — now connected to useTheme hook */}
+                <div className="flex bg-brand-surface rounded-full p-1">
+                  {/* Light button: gets the white "selected" style when isDark is false */}
+                  <button
+                    onClick={() => !isDark || toggle()} 
+                    className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      !isDark ? "bg-white shadow-sm text-text-primary" : "text-text-muted"
+                    }`}
+                  >
                     <Sun className="w-3 h-3" /> Light
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-1.5 text-text-muted text-xs font-bold">
+                  {/* Dark button: gets the white "selected" style when isDark is true */}
+                  <button
+                    onClick={() => isDark || toggle()}
+                    className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      isDark ? "bg-white shadow-sm text-text-primary" : "text-text-muted"
+                    }`}
+                  >
                     <Moon className="w-3 h-3" /> Dark
                   </button>
                 </div>
@@ -129,7 +143,7 @@ export const Profile = () => {
         <div className="flex flex-col gap-8">
           
           {/* CARD 3: ACTIVITY IMPRINT */}
-          <div className="bg-white border border-border-subtle rounded-xl p-6 shadow-sm">
+          <div className="bg-surface border border-border-subtle rounded-xl p-6 shadow-sm">
             <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-6">Activity Imprint</h3>
             
             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -151,7 +165,7 @@ export const Profile = () => {
             </div>
 
             {/* Total Readers Box */}
-            <div className="bg-[#EEF5F7] rounded-lg p-4 mb-6">
+            <div className="bg-brand-surface rounded-lg p-4 mb-6">
               <div className="flex justify-between items-start mb-2">
                 <BookOpen className="w-5 h-5 text-brand-primary" />
                 <span className="text-[10px] text-green-600 font-bold bg-green-100 px-2 py-0.5 rounded-full">+5 this week</span>

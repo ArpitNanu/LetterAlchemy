@@ -6,7 +6,7 @@ SideBarButton;
 export const SideBar = () => {
   return (
     <div className="flex flex-col gap-8 p-3">
-      <SideBarButton icon={<Home />} name="Home" path="/" />
+      <SideBarButton icon={<Home />} name="Home" path="/home" />
       <SideBarButton icon={<Bookmark />} name="Bookmark" path="/bookmark" />
       <SideBarButton
         icon={<LayoutDashboard />}
