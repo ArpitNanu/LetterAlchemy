@@ -14,6 +14,7 @@ model user {
   password    String
   bio         String?
   socialLinks String?
+  avatar String?
   posts       post[]
   comment     comment[]
   likes       like[]
