@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { Env } from "../types/env";
 import { getPrisma } from "../db/prisma";
 import { authmiddleware } from "../middleware/auth.middleware";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const users = new Hono<{
   Bindings: Env;
@@ -27,6 +29,7 @@ users.get("/profile", async (c) => {
         email: true,
         bio: true,
         socialLinks: true,
+        avatar: true,
       },
     });
 
@@ -90,6 +93,78 @@ users.get("/profile", async (c) => {
   } catch (error) {
     console.error("Profile Fetch Error:", error);
     return c.json({ success: false, msg: "Internal Server Error" }, 500);
+  }
+});
+
+// --- NEW UPLOAD ROUTES ---
+
+// 1. Generate a Pre-signed URL for the frontend to upload directly to R2
+users.post("/upload-url", async (c) => {
+  const userId = c.get("userId");
+  const { contentType, fileName } = await c.req.json();
+
+  if (!contentType || !fileName) {
+    return c.json({ success: false, msg: "Missing file info" }, 400);
+  }
+
+  // Create a unique key (filename) for the storage
+  const key = `avatars/${userId}-${Date.now()}-${fileName.replace(/\s+/g, "_")}`;
+
+  try {
+    const s3 = new S3Client({
+      region: "auto",
+      endpoint: c.env.R2_ENDPOINT,
+      credentials: {
+        accessKeyId: c.env.R2_ACCESS_KEY_ID,
+        secretAccessKey: c.env.R2_SECRET_ACCESS_KEY,
+      },
+    });
+
+    const command = new PutObjectCommand({
+      Bucket: c.env.R2_BUCKET_NAME,
+      Key: key,
+      ContentType: contentType,
+    });
+
+    // This URL expires in 60 seconds for security
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 60 });
+
+    return c.json({
+      success: true,
+      uploadUrl,
+      key,
+      publicUrl: `${c.env.R2_PUBLIC_URL}/${key}`,
+    });
+  } catch (error) {
+    console.error("Presigned URL Error:", error);
+    return c.json({ success: false, msg: "Failed to generate upload URL" }, 500);
+  }
+});
+
+// 2. Save the final uploaded image URL to the database
+users.post("/update-avatar", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const { avatarUrl } = await c.req.json();
+
+  if (!avatarUrl) {
+    return c.json({ success: false, msg: "Avatar URL is required" }, 400);
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { avatar: avatarUrl },
+    });
+
+    return c.json({
+      success: true,
+      message: "Avatar updated successfully",
+      avatarUrl: updatedUser.avatar,
+    });
+  } catch (error) {
+    console.error("Update Avatar Error:", error);
+    return c.json({ success: false, msg: "Database update failed" }, 500);
   }
 });
 

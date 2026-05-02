@@ -422,5 +422,57 @@ posts.post("/bookmark/:id", async (c) => {
   }
 });
 
+// Get all Bookmarks for a user
+posts.get("/bookmarks", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+
+  try {
+    const bookmarks = await prisma.bookmark.findMany({
+      where: { authorId: userId },
+      orderBy: { createdAt: "desc" },
+      // 🎓 ARCHITECTURE: We use 'include' here to automatically join the post data. 
+      // This is much faster than fetching bookmark IDs and then running a second query for the posts!
+      include: {
+        post: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            createdAt: true,
+            author: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+            _count: {
+              select: {
+                likes: true,
+                comments: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Formatting it so the frontend receives a clean array of posts, 
+    // rather than an array of bookmarks that contain posts inside them.
+    const formattedPosts = bookmarks.map((b) => ({
+      ...b.post,
+      // We keep the bookmark date in case we want to show "Bookmarked on X"
+      bookmarkedAt: b.createdAt,
+      // Tell the frontend PostCard component that this is absolutely bookmarked!
+      isBookmarked: true,
+    }));
+
+    return c.json({ success: true, data: formattedPosts });
+  } catch (error) {
+    console.error("Fetch Bookmarks Error:", error);
+    return c.json({ success: false, msg: "Internal server error" }, 500);
+  }
+});
+
 export default posts;
 
