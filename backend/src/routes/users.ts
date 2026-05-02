@@ -63,6 +63,16 @@ users.get("/profile", async (c) => {
     });
     
     const totalViews = viewsAgg._sum.views || 0;
+    
+    // 3. Fetch Total Likes across all posts
+    const totalLikes = await prisma.like.count({
+      where: { post: { authorId: userId } },
+    });
+
+    // 4. Fetch Total Comments across all posts
+    const totalComments = await prisma.comment.count({
+      where: { post: { authorId: userId } },
+    });
 
     return c.json({
       success: true,
@@ -72,6 +82,8 @@ users.get("/profile", async (c) => {
           drafts: draftsCount,
           published: publishedCount,
           totalViews: totalViews,
+          totalLikes: totalLikes,
+          totalComments: totalComments,
         },
       },
     });

@@ -104,9 +104,13 @@ posts.get("/posts", async (c) => {
         title: true,
         content: true,
         createdAt: true,
-        likes: true,
-        comments: true,
         published: true,
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
     });
     return c.json({
@@ -267,33 +271,6 @@ posts.patch("/edit/:id", async (c) => {
   }
 });
 
-posts.delete("/post/delete/:id", async (c) => {
-  const prisma = getPrisma(c.env);
-  const userId = Number(c.get("userId"));
-  const postId = Number(c.req.param("id"));
-  try {
-    const findPost = await prisma.post.findFirst({
-      where: {
-        id: postId,
-        authorId: userId,
-      },
-    });
-    if (findPost === null) {
-      c.json({ msg: "post not found" });
-    } else {
-      const deletePost = await prisma.post.delete({
-        where: {
-          id: postId,
-        },
-      });
-      return c.json({ success: true, message: "user as been deleted" });
-    }
-  } catch (error) {
-    console.error(error);
-    return c.json({ msg: "internal server error" }, 500);
-  }
-});
-
 posts.get("/posts/:id", async (c) => {
   const prisma = getPrisma(c.env);
   const Userid = Number(c.get("userId"));
@@ -366,4 +343,84 @@ posts.patch("/publish/:id", async (c) => {
   }
 });
 
+posts.delete("/posts/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+
+  try {
+    const post = await prisma.post.findFirst({
+      where: { id: postId, authorId: userId },
+    });
+
+    if (!post) return c.json({ msg: "Post not found" }, 404);
+
+    await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    return c.json({ success: true, msg: "Post deleted" });
+  } catch (error) {
+    console.error("Delete Error:", error);
+    return c.json({ msg: "Internal server error" }, 500);
+  }
+});
+
+// Toggle Like
+posts.post("/like/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+
+  try {
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        postId_authorId: { postId, authorId: userId },
+      },
+    });
+
+    if (existingLike) {
+      await prisma.like.delete({ where: { id: existingLike.id } });
+      return c.json({ success: true, message: "Unliked", liked: false });
+    } else {
+      await prisma.like.create({
+        data: { postId, authorId: userId },
+      });
+      return c.json({ success: true, message: "Liked", liked: true });
+    }
+  } catch (error) {
+    console.error("Like Toggle Error:", error);
+    return c.json({ success: false, msg: "Internal server error" }, 500);
+  }
+});
+
+// Toggle Bookmark
+posts.post("/bookmark/:id", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+
+  try {
+    const existingBookmark = await prisma.bookmark.findUnique({
+      where: {
+        postId_authorId: { postId, authorId: userId },
+      },
+    });
+
+    if (existingBookmark) {
+      await prisma.bookmark.delete({ where: { id: existingBookmark.id } });
+      return c.json({ success: true, message: "Removed bookmark", bookmarked: false });
+    } else {
+      await prisma.bookmark.create({
+        data: { postId, authorId: userId },
+      });
+      return c.json({ success: true, message: "Bookmarked", bookmarked: true });
+    }
+  } catch (error) {
+    console.error("Bookmark Toggle Error:", error);
+    return c.json({ success: false, msg: "Internal server error" }, 500);
+  }
+});
+
 export default posts;
+

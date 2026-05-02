@@ -17,6 +17,7 @@ model user {
   posts       post[]
   comment     comment[]
   likes       like[]
+  bookmarks   bookmark[]
 }
 
 model post {
@@ -32,8 +33,8 @@ model post {
   updatedAt DateTime  @updatedAt
   comments  comment[]
   likes     like[]
+  bookmarks bookmark[]
   aiTweet   aiTweet[]
- 
 }
 
 model comment {
@@ -75,3 +76,12 @@ model aiTweet{
 
 }
 
+model bookmark {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  post      post     @relation(fields: [postId], references: [id])
+  postId    Int 
+  author    user @relation(fields: [authorId], references: [id]) 
+  authorId  Int 
+  @@unique([postId,authorId])
+}
