@@ -69,3 +69,7 @@ export const toggleBookmark = async (id: string | number) => {
   return res.data;
 };
 
+export const getBookmarkedPosts = async () => {
+  const res = await apiClient.get("/bookmarks");
+  return res.data;
+};

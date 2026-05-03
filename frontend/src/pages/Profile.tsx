@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
-// We import Lucide icons to closely match your Figma design
-import { Pencil, FileText, CheckCircle, BookOpen, LogOut, Sun, Moon } from "lucide-react";
+import { Pencil, FileText, CheckCircle, BookOpen, LogOut, Sun, Moon, Camera, Loader2 } from "lucide-react";
 import apiClient from "@/lib/api"; // Your configured axios instance
+import axios from "axios"; // Used for direct R2 upload to avoid baseURL
 import { useNavigate } from "react-router-dom";
+
 
 export const Profile = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const Profile = () => {
   // 1. STATE: We create state variables to hold our backend data
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   // 2. DATA FETCHING: We use useEffect to fetch the data EXACTLY ONCE when the page loads
   useEffect(() => {
@@ -35,6 +37,52 @@ export const Profile = () => {
   const handleSignOut = () => {
     localStorage.removeItem("token"); // Destroy the JWT token locally
     navigate("/login"); // Send the user back to the login screen
+  };
+
+  // --- 🎨 UPLOAD LOGIC ---
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Basic Validation: Check if it's an image and size < 5MB
+    if (!file.type.startsWith("image/")) return alert("Please upload an image file.");
+    if (file.size > 5 * 1024 * 1024) return alert("File is too large. Max 5MB.");
+
+    try {
+      setIsUploading(true);
+
+      // 1. Get the "Ticket" (Presigned URL) from our backend
+      const { data } = await apiClient.post("/users/upload-url", {
+        contentType: file.type,
+        fileName: file.name,
+      });
+
+      if (!data.success) throw new Error("Failed to get upload URL");
+
+      // 2. Upload directly to Cloudflare R2
+      // We use 'axios' instead of 'apiClient' here because we don't want to use our /api base URL
+      await axios.put(data.uploadUrl, file, {
+        headers: { "Content-Type": file.type },
+      });
+
+      // 3. Notify our backend to save the new URL in the database
+      const updateRes = await apiClient.post("/users/update-avatar", {
+        avatarUrl: data.publicUrl,
+      });
+
+      if (updateRes.data.success) {
+        // 4. Update the local UI state immediately
+        setProfileData((prev: any) => ({
+          ...prev,
+          profile: { ...prev.profile, avatar: data.publicUrl },
+        }));
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // 4. LOADING STATE: Show something nice while we wait for the backend
@@ -74,11 +122,46 @@ export const Profile = () => {
             </button>
             
             <div className="flex gap-6 items-start">
-              {/* Avatar Placeholder (Falls back to initials) */}
-              <div className="w-24 h-24 rounded-lg bg-brand-primary/10 flex items-center justify-center shrink-0">
-                <span className="text-3xl font-bold text-brand-primary uppercase">
-                  {profile.firstName.charAt(0)}{profile.lastName?.charAt(0)}
-                </span>
+              {/* Avatar Section */}
+              <div className="relative group shrink-0">
+                <div className="w-24 h-24 rounded-lg bg-brand-primary/10 flex items-center justify-center overflow-hidden border border-border-subtle">
+                  {profile.avatar ? (
+                    <img 
+                      src={profile.avatar} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <span className="text-3xl font-bold text-brand-primary uppercase">
+                      {profile.firstName.charAt(0)}{profile.lastName?.charAt(0)}
+                    </span>
+                  )}
+                  
+                  {/* Loading Overlay */}
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <Loader2 className="w-6 h-6 text-white animate-spin" />
+                    </div>
+                  )}
+                </div>
+                
+                {/* Hidden File Input */}
+                <input 
+                  type="file" 
+                  id="avatar-upload" 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={isUploading}
+                />
+                
+                {/* Upload Button Overlay */}
+                <label 
+                  htmlFor="avatar-upload"
+                  className="absolute -bottom-2 -right-2 p-2 bg-surface border border-border-subtle rounded-full shadow-md text-text-muted hover:text-brand-primary cursor-pointer transition-all hover:scale-110"
+                >
+                  <Camera className="w-4 h-4" />
+                </label>
               </div>
               
               <div>

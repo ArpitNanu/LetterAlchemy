@@ -11,6 +11,7 @@ import { Bookmark } from "./components/Bookmark";
 import { Profile } from "./pages/Profile";
 import { ReaderPage } from "./pages/ReaderPage";
 import { LandingPage } from "./pages/LandingPage";
+import { FocusMode } from "./components/FocusMode";
 
 export const App = () => {
   return (
@@ -31,6 +32,7 @@ export const App = () => {
               //bcuz it's like bouncer for dashboard
             }
           />
+          <Route path="/post/:id" element={<ReaderPage />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />
@@ -40,8 +42,7 @@ export const App = () => {
         <Route path="/editor/new" element={<EditorPage />} />
 
         <Route path="/editor" element={<EditorPage />} />
-
-        {<Route path="/post/:id" element={<ReaderPage />} />}
+        <Route path="/reader" element={<FocusMode />} />
       </Routes>
     </>
   );

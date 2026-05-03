@@ -10,7 +10,7 @@ export const ReaderPage = () => {
   const [post, setPost] = useState({
     id: 0,
     title: "",
-    content: null, // tiptap content is stored in json format 
+    content: null,
     createdAt: "",
     author: {
       id: 0,
@@ -26,16 +26,10 @@ export const ReaderPage = () => {
   const { id } = useParams();
   const hasHydrated = useRef(false);
 
-  // Initialize TipTap in read-only mode
   const editor = useEditor({
     extensions: [StarterKit],
-    editable: false, // This is what makes it a "Reader"
+    editable: false,
     content: null,
-    editorProps: {
-      attributes: {
-        class: "focus:outline-none", // add custom tailwind classes for editor container
-      },
-    },
   });
 
   useEffect(() => {
@@ -52,7 +46,6 @@ export const ReaderPage = () => {
     postByid();
   }, [id]);
 
-  // Hydrate the editor when content is fetched
   useEffect(() => {
     if (editor && post.content && !hasHydrated.current) {
       editor.commands.setContent(post.content);
@@ -61,35 +54,60 @@ export const ReaderPage = () => {
   }, [editor, post.content]);
 
   return (
-    <div className="grid grid-cols-[1fr_300px] md:grid-cols-[3fr_1fr] gap-4 h-screen p-8">
-      <div className="max-w-3xl mx-auto w-full">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          <div className="flex items-center text-muted-foreground gap-2">
-            <span>By {post.author.firstName} {post.author.lastName}</span>
-            <span>•</span>
-            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-          </div>
-        </header>
-
-        <article className="prose prose-neutral dark:prose-invert lg:prose-xl max-w-none">
-          {editor ? (
-            <EditorContent editor={editor} />
-          ) : (
-            <div className="text-lg leading-relaxed text-gray-400">
-              Loading content...
+    <div className="flex h-full overflow-hidden bg-page-bg">
+      {/* Scrollable Reader Content */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar bg-essay-bg">
+        <div className="max-w-3xl mx-auto py-16 px-8 lg:px-12">
+          <header className="mb-12">
+            <h1 className="text-5xl font-extrabold text-text-main mb-6 leading-[1.1] tracking-tight">
+              {post.title}
+            </h1>
+            <div className="flex items-center gap-4 text-text-muted border-b border-border-subtle pb-8">
+              <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold">
+                {post.author.firstName?.[0]}
+              </div>
+              <div>
+                <p className="font-semibold text-text-main">
+                  {post.author.firstName} {post.author.lastName}
+                </p>
+                <p className="text-xs uppercase tracking-widest">
+                  {new Date(post.createdAt).toLocaleDateString("en-US", { month: 'long', day: 'numeric', year: 'numeric' })} • {post._count.likes} Likes
+                </p>
+              </div>
             </div>
-          )}
-        </article>
+          </header>
 
-        <div className="mt-12 pt-8 border-t">
-          <CommentInput />
+          <article className="tiptap-global mb-20 min-h-[500px]">
+            {editor ? (
+              <EditorContent editor={editor} />
+            ) : (
+              <div className="flex items-center justify-center h-40">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
+              </div>
+            )}
+          </article>
+
+          <section className="pt-12 border-t border-border-subtle">
+            <h3 className="text-xl font-bold mb-6">Responses ({post._count.comments})</h3>
+            <CommentInput />
+          </section>
         </div>
       </div>
-      
-      <aside className="border-l pl-4">
-        <AiChatbox />
+
+      {/* AI Sidebar - Sticky within the reader view */}
+      <aside className="w-[350px] hidden xl:block border-l border-border-subtle bg-sidebar-bg/30 p-6 overflow-y-auto">
+        <div className="bg-surface p-6 rounded-2xl border border-border-subtle shadow-sm mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
+            <span className="text-[10px] font-bold text-brand-primary uppercase tracking-[0.2em]">Live Context</span>
+          </div>
+          <p className="text-xs text-text-muted leading-relaxed mb-4">
+            I'm currently analyzing this article. Ask me for a summary, key takeaways, or to explore the author's tone.
+          </p>
+          <AiChatbox />
+        </div>
       </aside>
     </div>
   );
 };
+
