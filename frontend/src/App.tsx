@@ -11,7 +11,7 @@ import { Bookmark } from "./components/Bookmark";
 import { Profile } from "./pages/Profile";
 import { ReaderPage } from "./pages/ReaderPage";
 import { LandingPage } from "./pages/LandingPage";
-import { FocusMode } from "./components/FocusMode";
+import { FocusMode } from "./components/Reader/FocusMode";
 
 export const App = () => {
   return (

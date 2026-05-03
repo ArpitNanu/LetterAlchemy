@@ -1,12 +1,15 @@
 import { AiChatbox } from "@/components/Layout/AI/AiChatbox";
 import { CommentInput } from "@/components/ui/CommentInput";
+import { FocusMode } from "@/components/Reader/FocusMode";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { getPublicPostById } from "@/api/postApi";
 import { useEditor, EditorContent } from "@tiptap/react";
+import { Maximize } from "lucide-react";
 import StarterKit from "@tiptap/starter-kit";
 
 export const ReaderPage = () => {
+  const [focusActive, setFocusActive] = useState(false);
   const [post, setPost] = useState({
     id: 0,
     title: "",
@@ -75,6 +78,19 @@ export const ReaderPage = () => {
                 </p>
               </div>
             </div>
+            <button
+              onClick={() => setFocusActive(true)}
+              disabled={!editor || !post.content}
+              className="
+                mt-6 flex items-center gap-2 px-4 py-2 rounded-lg
+                bg-brand-primary/10 text-brand-primary text-sm font-medium
+                hover:bg-brand-primary/20 transition-colors cursor-pointer
+                disabled:opacity-30 disabled:cursor-not-allowed
+              "
+            >
+              <Maximize size={16} />
+              Focus Mode
+            </button>
           </header>
 
           <article className="tiptap-global mb-20 min-h-[500px]">
@@ -107,6 +123,14 @@ export const ReaderPage = () => {
           <AiChatbox />
         </div>
       </aside>
+
+      {/* Focus Mode Overlay — rendered via Portal */}
+      {focusActive && editor && (
+        <FocusMode
+          text={editor.getText()}
+          onExit={() => setFocusActive(false)}
+        />
+      )}
     </div>
   );
 };

@@ -38,6 +38,11 @@
   --color-status-published: #4a6741;
   --color-status-draft: #9ca3af;
   --color-status-scheduled: #d97706;
+  
+  /* Focus Mode Tokens */
+  --color-focus-overlay: rgba(255, 255, 255, 0.9);
+  --color-focus-card: rgba(0, 0, 0, 0.03);
+  --color-focus-muted: rgba(0, 0, 0, 0.3);
 
   /* Landing Page Chart Bars (Extracted from Figma) */
   --color-chart-1: #e4e4e4;
@@ -70,6 +75,11 @@
   --color-text-main: #f3f4f6;
   --color-text-muted: #9ca3af;
   --color-border-subtle: #262626;
+
+  /* Focus Mode Tokens - Dark Overrides */
+  --color-focus-overlay: rgba(0, 0, 0, 0.85);
+  --color-focus-card: rgba(255, 255, 255, 0.05);
+  --color-focus-muted: rgba(255, 255, 255, 0.3);
 }
 
 /* ----------------------------- */
