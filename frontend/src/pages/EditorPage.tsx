@@ -2,11 +2,12 @@
 import { Title } from "@/components/editor/Title";
 import EditorMain from "../components/editor/EditorMain";
 import { MenuBar } from "@/components/editor/MenuBar";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
   createDraft,
   getLatestDraft,
+  getPostById,
   updateDraft,
   publishingDraft,
 } from "@/api/postApi";
@@ -22,7 +23,14 @@ const EMPTY_DOC = {
 export const EditorPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id } = useParams<{ id: string }>();
+
+  // Three modes derived from URL shape:
+  //   /editor/new   → isNewDraft  (blank editor, no fetch)
+  //   /editor/42    → isEditMode  (fetch post #42 by ID)
+  //   /editor       → latest draft (old behaviour)
   const isNewDraft = location.pathname === "/editor/new";
+  const isEditMode = !!id && id !== "new";
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState<any>(EMPTY_DOC);
@@ -54,19 +62,29 @@ export const EditorPage = () => {
   useEffect(() => {
     const fetchDraft = async () => {
       try {
+        // Mode 1: /editor/new — blank slate, nothing to fetch
         if (isNewDraft) {
           setIsHydrating(false);
           return;
         }
-        const res = await getLatestDraft();
 
+        // Mode 2: /editor/:id — fetch the specific post the user clicked Edit on
+        if (isEditMode && id) {
+          const res = await getPostById(id);
+          if (!res.success || !res.data) return;
+
+          setTitle(res.data.title || "");
+          setContent(res.data.content || EMPTY_DOC);
+          setDraftId(res.data.id || null);
+          return;
+        }
+
+        // Mode 3: /editor — fall back to the user's latest draft
+        const res = await getLatestDraft();
         if (!res.success || !res.data) return;
 
         setTitle(res.data.title || "");
-
-        const incomingContent = res.data.content || EMPTY_DOC;
-        setContent(incomingContent);
-
+        setContent(res.data.content || EMPTY_DOC);
         setDraftId(res.data.id || null);
       } catch (error) {
         console.error(error);

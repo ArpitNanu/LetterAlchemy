@@ -8,4 +8,11 @@ export const getUserProfile = async () => {
   return res.data;
 };
 
-// You can add more user-related functions here later (update profile, etc.)
+/**
+ * Sends a PATCH request to update the authenticated user's bio.
+ * Uses a partial update so only the bio field is touched in the DB.
+ */
+export const updateUserBio = async (bio: string) => {
+  const res = await apiClient.patch("/users/update-profile", { bio });
+  return res.data;
+};

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
-import { Pencil, FileText, CheckCircle, BookOpen, LogOut, Sun, Moon, Camera, Loader2 } from "lucide-react";
+import { Pencil, FileText, CheckCircle, BookOpen, LogOut, Sun, Moon, Camera, Loader2, X, Check, Link } from "lucide-react";
 import apiClient from "@/lib/api"; // Your configured axios instance
 import axios from "axios"; // Used for direct R2 upload to avoid baseURL
 import { useNavigate } from "react-router-dom";
+import { updateUserBio } from "@/api/UserApi";
 
 
 export const Profile = () => {
@@ -14,6 +15,12 @@ export const Profile = () => {
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+
+  // --- Bio edit state ---
+  const [isEditingBio, setIsEditingBio] = useState(false);  // toggles view ↔ edit mode
+  const [bioDraft, setBioDraft] = useState("");             // holds "work in progress" text
+  const [isSavingBio, setIsSavingBio] = useState(false);   // shows spinner on Save button
+  const [bioError, setBioError] = useState<string | null>(null); // surfaces save failures
 
   // 2. DATA FETCHING: We use useEffect to fetch the data EXACTLY ONCE when the page loads
   useEffect(() => {
@@ -104,7 +111,7 @@ export const Profile = () => {
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-text-primary mb-2">Profile</h1>
         <p className="text-text-muted font-serif italic">
-          Stitch - Design with AI. View your information, viewing preferences, and account statistics in your digital sanctuary.
+          View your information, viewing preferences, and account statistics in your digital sanctuary.
         </p>
       </div>
 
@@ -116,12 +123,20 @@ export const Profile = () => {
           
           {/* CARD 1: USER IDENTITY */}
           <div className="bg-surface border border-border-subtle rounded-xl p-6 relative shadow-sm">
-            {/* Edit Button in top right */}
-            <button className="absolute top-6 right-6 text-text-muted hover:text-brand-primary transition-colors">
+            {/* Pencil button — opens bio edit mode */}
+            <button
+              className="absolute top-6 right-6 text-text-muted hover:text-brand-primary transition-colors"
+              title="Edit bio"
+              onClick={() => {
+                setBioDraft(profile.bio || ""); // seed the draft with current saved bio
+                setBioError(null);
+                setIsEditingBio(true);
+              }}
+            >
               <Pencil className="w-5 h-5" />
             </button>
             
-            <div className="flex gap-6 items-start">
+            <div className="flex gap-6 items-start ">
               {/* Avatar Section */}
               <div className="relative group shrink-0">
                 <div className="w-24 h-24 rounded-lg bg-brand-primary/10 flex items-center justify-center overflow-hidden border border-border-subtle">
@@ -164,22 +179,87 @@ export const Profile = () => {
                 </label>
               </div>
               
-              <div>
+              <div className="flex-1 min-w-0">
                 <h2 className="text-2xl font-bold text-text-primary capitalize">
                   {profile.firstName} {profile.lastName}
                 </h2>
                 <p className="text-text-muted text-sm mb-4">{profile.email}</p>
                 
                 <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2">Bio</h3>
-                <p className="text-text-primary font-serif mb-4 leading-relaxed">
-                  {profile.bio || "No bio written yet. Click the pencil icon to add one."}
-                </p>
-                
-                {/* Tags (Mocked for now as per Figma) */}
-                <div className="flex gap-2">
-                  <span className="px-3 py-1 bg-brand-surface text-brand-primary text-xs rounded-full">Architecture</span>
-                  <span className="px-3 py-1 bg-brand-surface text-brand-primary text-xs rounded-full">Design</span>
-                </div>
+
+                {/* BIO: View mode vs Edit mode */}
+                {isEditingBio ? (
+                  <div className="mb-4">
+                    <textarea
+                      value={bioDraft}
+                      autoComplete="aria-labelledby"
+                      onChange={(e) => setBioDraft(e.target.value)}
+                      rows={4}
+                      maxLength={300}
+                      placeholder="Tell the world about yourself..."
+                      className="w-full bg-[var(--color-bg)] border border-border-subtle rounded-lg px-3 py-2 text-sm text-text-primary font-serif resize-none focus:outline-none focus:ring-2 focus:ring-brand-primary/40 transition-all"
+                    />
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-[10px] text-text-muted">{bioDraft.length}/300</span>
+                      <div className="flex gap-2">
+                        {/* Cancel — discard draft */}
+                        <button
+                          onClick={() => { setIsEditingBio(false); setBioError(null); }}
+                          className="flex items-center gap-1 px-3 py-1 text-xs text-text-muted border border-border-subtle rounded-full hover:bg-border-subtle transition-colors"
+                        >
+                          <X className="w-3 h-3" /> Cancel
+                        </button>
+                        {/* Save — persist to backend */}
+                        <button
+                          disabled={isSavingBio}
+                          onClick={async () => {
+                            setIsSavingBio(true);
+                            setBioError(null);
+                            try {
+                              const res = await updateUserBio(bioDraft);
+                              if (res.success) {
+                                // Commit draft to the main profile state
+                                setProfileData((prev: any) => ({
+                                  ...prev,
+                                  profile: { ...prev.profile, bio: bioDraft },
+                                }));
+                                setIsEditingBio(false);
+                              } else {
+                                setBioError("Save failed. Please try again.");
+                              }
+                            } catch {
+                              setBioError("Network error. Please try again.");
+                            } finally {
+                              setIsSavingBio(false);
+                            }
+                          }}
+                          className="flex items-center gap-1 px-3 py-1 text-xs text-white bg-brand-primary rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
+                        >
+                          {isSavingBio ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                          {isSavingBio ? "Saving..." : "Save"}
+                        </button>
+                      </div>
+                    </div>
+                    {bioError && <p className="text-red-500 text-xs mt-1">{bioError}</p>}
+                  </div>
+                ) : (
+                  <p className="text-text-primary font-serif mb-4 leading-relaxed">
+                    {profile.bio || "No bio written yet. Click the pencil icon to add one."}
+                  </p>
+                )}
+
+                {/* User website link (replaces hardcoded Architecture / Design tags) */}
+                {profile.socialLinks?.website && (
+                  <a
+                    href={profile.socialLinks.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-brand-primary hover:underline"
+                  >
+                    <Link className="w-3 h-3" />
+                    {profile.socialLinks.website.replace(/^https?:\/\//, "")}
+                  </a>
+                )}
               </div>
             </div>
           </div>

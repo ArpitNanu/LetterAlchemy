@@ -51,36 +51,41 @@ const UserDropdown = ({ name, email, avatarUrl }: UserProfileProps) => {
         />
       </button>
 
-      {/* Dropdown */}
+      {/* Dropdown Card */}
       {isOpen && (
-        <div className="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-base border border-default-medium bg-neutral-primary-medium shadow-lg ring-1 ring-black ring-opacity-5">
-          <div className="px-4 py-3 border-b border-default-medium text-sm text-heading">
-            <div className="font-medium truncate">{name}</div>
-            <div className="truncate text-xs opacity-80">{email}</div>
+        <div className="absolute right-0 z-50 mt-3 w-56 origin-top-right rounded-xl border border-border-subtle bg-brand-surface shadow-xl ring-1 ring-black/5 overflow-hidden animate-in fade-in zoom-in duration-200">
+          {/* User Info Header */}
+          <div className="px-4 py-4 border-b border-border-subtle bg-white/50 dark:bg-black/20">
+            <p className="text-sm font-bold text-text-main truncate">{name}</p>
+            <p className="text-xs text-text-muted truncate mt-0.5">{email}</p>
           </div>
 
-          <ul className="p-2 text-sm text-body font-medium list-none">
-            <li>
-              <a className="block w-full p-2 hover:bg-neutral-tertiary-medium rounded-md">
-                Dashboard
-              </a>
-            </li>
+          {/* Menu Items */}
+          <nav className="p-1.5 flex flex-col gap-0.5">
+            <button
+              onClick={() => { navigate("/dashboard"); setIsOpen(false); }}
+              className="flex items-center w-full px-3 py-2 text-sm font-medium text-text-main rounded-lg hover:bg-brand-primary hover:text-white transition-all duration-200 group"
+            >
+              Dashboard
+            </button>
 
-            <li>
-              <a className="block w-full p-2 hover:bg-neutral-tertiary-medium rounded-md">
-                Settings
-              </a>
-            </li>
+            <button
+              onClick={() => { navigate("/profile"); setIsOpen(false); }}
+              className="flex items-center w-full px-3 py-2 text-sm font-medium text-text-main rounded-lg hover:bg-brand-primary hover:text-white transition-all duration-200 group"
+            >
+              Settings
+            </button>
 
-            <li className="mt-1 border-t border-default-medium pt-1">
-              <button
-                onClick={handleLogout}
-                className="block w-full text-left p-2 hover:bg-neutral-tertiary-medium text-fg-danger rounded-md"
-              >
-                Sign out
-              </button>
-            </li>
-          </ul>
+            {/* Horizontal Divider */}
+            <div className="h-[1px] bg-border-subtle my-1.5 mx-1" />
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-all duration-200"
+            >
+              Sign out
+            </button>
+          </nav>
         </div>
       )}
     </div>

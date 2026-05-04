@@ -11,7 +11,7 @@ import { Bookmark } from "./components/Bookmark";
 import { Profile } from "./pages/Profile";
 import { ReaderPage } from "./pages/ReaderPage";
 import { LandingPage } from "./pages/LandingPage";
-import { FocusMode } from "./components/Reader/FocusMode";
+//import { FocusMode } from "./components/Reader/FocusMode";
 
 export const App = () => {
   return (
@@ -41,8 +41,10 @@ export const App = () => {
 
         <Route path="/editor/new" element={<EditorPage />} />
 
+        <Route path="/editor/:id" element={<EditorPage />} />
+
         <Route path="/editor" element={<EditorPage />} />
-        <Route path="/reader" element={<FocusMode />} />
+        {/* <Route path="/reader" element={<FocusMode />} /> */}
       </Routes>
     </>
   );

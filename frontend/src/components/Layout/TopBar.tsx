@@ -1,11 +1,15 @@
 import { BookOpen, Search, SquarePen, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/context/AuthContext";
 import UserDropdown from "../ui/UserDropdown";
 
 export const TopBar = () => {
   const navigate = useNavigate();
-  const { isDark, toggle } = useTheme(); // Same hook — stays in sync with the Profile page toggle
+  const { isDark, toggle } = useTheme();
+  const { state } = useAuth();
+  const user = state.user;
+
   return (
     <div className="h-16 border-b border-border-subtle bg-surface flex shrink-0">
       {/* Left Branding Area - Perfectly aligned with Sidebar */}
@@ -60,9 +64,9 @@ export const TopBar = () => {
           <div className="h-8 w-[1px] bg-border-subtle mx-2" />
 
           <UserDropdown
-            name="Bonnie Green"
-            email="name@flowbite.com"
-            avatarUrl="/docs/images/people/profile-picture-5.jpg"
+            name={`${user?.firstName || "User"} ${user?.lastName || ""}`}
+            email={user?.email || "No email"}
+            avatarUrl={(user as any)?.avatar || "/docs/images/people/profile-picture-5.jpg"}
           />
         </div>
       </div>

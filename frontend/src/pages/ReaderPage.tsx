@@ -1,11 +1,14 @@
 import { AiChatbox } from "@/components/Layout/AI/AiChatbox";
 import { CommentInput } from "@/components/ui/CommentInput";
+import { CommentList } from "@/components/ui/CommentList";
 import { FocusMode } from "@/components/Reader/FocusMode";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { getPublicPostById } from "@/api/postApi";
+import { getComments, createComment, deleteComment } from "@/api/commentApi";
+import { useAuth } from "@/context/AuthContext";
 import { useEditor, EditorContent } from "@tiptap/react";
-import { Maximize } from "lucide-react";
+import { Maximize, MessageSquare } from "lucide-react";
 import StarterKit from "@tiptap/starter-kit";
 
 export const ReaderPage = () => {
@@ -25,6 +28,8 @@ export const ReaderPage = () => {
       comments: 0,
     },
   });
+  const [comments, setComments] = useState<any[]>([]);
+  const { state: authState } = useAuth();
 
   const { id } = useParams();
   const hasHydrated = useRef(false);
@@ -48,6 +53,40 @@ export const ReaderPage = () => {
     };
     postByid();
   }, [id]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (!id) return;
+      const res = await getComments(Number(id));
+      if (res.success) {
+        setComments(res.data);
+      }
+    };
+    fetchComments();
+  }, [id]);
+
+  const handleCommentSubmit = async (text: string) => {
+    if (!id) return;
+    const res = await createComment(Number(id), text);
+    if (res.success) {
+      setComments((prev) => [res.data, ...prev]);
+      setPost((prev) => ({
+        ...prev,
+        _count: { ...prev._count, comments: prev._count.comments + 1 },
+      }));
+    }
+  };
+
+  const handleCommentDelete = async (commentId: number) => {
+    const res = await deleteComment(commentId);
+    if (res.success) {
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      setPost((prev) => ({
+        ...prev,
+        _count: { ...prev._count, comments: Math.max(0, prev._count.comments - 1) },
+      }));
+    }
+  };
 
   useEffect(() => {
     if (editor && post.content && !hasHydrated.current) {
@@ -104,8 +143,22 @@ export const ReaderPage = () => {
           </article>
 
           <section className="pt-12 border-t border-border-subtle">
-            <h3 className="text-xl font-bold mb-6">Responses ({post._count.comments})</h3>
-            <CommentInput />
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-2 bg-brand-primary/10 rounded-lg text-brand-primary">
+                <MessageSquare size={20} />
+              </div>
+              <h3 className="text-2xl font-bold text-text-main">
+                Responses <span className="text-text-muted font-normal ml-1">({post._count.comments})</span>
+              </h3>
+            </div>
+            
+            <CommentInput onSubmit={handleCommentSubmit} />
+            
+            <CommentList 
+              comments={comments} 
+              currentUserId={authState.user?.id ? Number(authState.user.id) : undefined}
+              onDelete={handleCommentDelete}
+            />
           </section>
         </div>
       </div>
