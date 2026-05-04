@@ -1,8 +1,9 @@
-import { BookOpen, Search, SquarePen, Sun, Moon } from "lucide-react";
+import { BookOpen, SquarePen, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/context/AuthContext";
 import UserDropdown from "../ui/UserDropdown";
+import SearchBox from "../ui/SearchBox";
 
 export const TopBar = () => {
   const navigate = useNavigate();
@@ -27,17 +28,8 @@ export const TopBar = () => {
 
       {/* Right Actions Area */}
       <div className="flex-1 flex items-center justify-between px-8 gap-8">
-        {/* Search Bar Section */}
-        <div className="flex-1 max-w-xl">
-          <div className="flex items-center rounded-full bg-brand-surface border border-border-subtle px-4 py-2 focus-within:ring-2 focus-within:ring-brand-highlight/20 transition-all">
-            <Search className="w-4 h-4 text-text-muted shrink-0" />
-            <input
-              className="outline-none px-3 flex-1 bg-transparent text-sm text-text-main placeholder:text-text-muted/60 w-full"
-              type="text"
-              placeholder="Search your digital sanctuary..."
-            />
-          </div>
-        </div>
+        {/* Search Box Component */}
+        <SearchBox />
 
         {/* Global Actions Section */}
         <div className="flex items-center gap-5">

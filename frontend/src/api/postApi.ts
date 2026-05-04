@@ -73,3 +73,8 @@ export const getBookmarkedPosts = async () => {
   const res = await apiClient.get("/bookmarks");
   return res.data;
 };
+
+export const searchPublicPosts = async (query: string) => {
+  const res = await apiClient.get(`/public/search?q=${query}`);
+  return res.data;
+};
