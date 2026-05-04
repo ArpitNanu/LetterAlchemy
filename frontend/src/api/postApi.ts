@@ -27,9 +27,9 @@ export const publishingDraft = async (id: number) => {
   return res.data;
 };
 
-export const getPublicPost = async () => {
-  const res = await apiClient.get("/public");
-  return res.data;
+export const getPublicPosts = async () => {
+  const response = await apiClient.get("/posts/public");
+  return response.data;
 };
 
 export const getPostById = async (id: string | undefined) => {
