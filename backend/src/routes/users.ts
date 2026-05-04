@@ -118,6 +118,10 @@ users.post("/upload-url", async (c) => {
         accessKeyId: c.env.R2_ACCESS_KEY_ID,
         secretAccessKey: c.env.R2_SECRET_ACCESS_KEY,
       },
+      // Disable auto-checksum: SDK v3 adds x-amz-checksum-crc32 by default.
+      // These unsigned headers break R2's signature validation on presigned URLs.
+      requestChecksumCalculation: "when_required",
+      responseChecksumValidation: "when_required",
     });
 
     const command = new PutObjectCommand({
@@ -127,7 +131,8 @@ users.post("/upload-url", async (c) => {
     });
 
     // This URL expires in 60 seconds for security
-    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 60 });
+    // Increased from 60s → 300s to survive slow preflight handshakes
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
 
     return c.json({
       success: true,
