@@ -14,7 +14,26 @@ export async function summarizeHeadline(title: string, apiKey: string) {
           role: "user",
           parts: [
             {
-              text: `You are an expert creative writing assistant. I will give you a news headline. Generate 3 distinct, thought-provoking writing prompts based on it. Return ONLY a valid JSON array of 3 strings. Do not include any intro text or markdown formatting. Example: ["Prompt 1", "Prompt 2", "Prompt 3"]. Headline: ${title}`,
+              text: `Act as an expert, creative writing assistant. I will provide you with a news headline.
+Analyze the headline and generate exactly 3 distinct, thought-provoking writing prompts inspired by its themes. Return valid JSON using the exact schema below. 
+
+Schema:
+[
+  "String",
+  "String",
+  "String"
+]
+
+EXAMPLE:
+Headline: Scientists Discover New Deep Sea Ecosystem
+JSON Response:
+[
+  "Write a story from the perspective of a creature living in this newly discovered ecosystem who encounters a submarine for the first time.",
+  "A marine biologist makes a discovery in the deep sea that challenges everything humanity knows about evolution. What do they find?",
+  "In a future where the surface world is uninhabitable, a society has built a city mimicking the newly discovered deep sea ecosystem. Describe their daily life."
+]
+
+Headline: ${title}`,
             },
           ],
         },
@@ -23,7 +42,10 @@ export async function summarizeHeadline(title: string, apiKey: string) {
 
     // Clean up potential markdown formatting from the AI response
     let cleanText = result.text || "[]";
-    cleanText = cleanText.replace(/```json/gi, "").replace(/```/g, "").trim();
+    cleanText = cleanText
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
 
     return cleanText;
   } catch (error) {
