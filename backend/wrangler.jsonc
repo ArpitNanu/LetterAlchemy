@@ -4,38 +4,15 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-01-05",
   "triggers": {
-    "crons": ["0 0 * * *"], // This means it will run exactly once every day at midnight (00:00)
+    "crons": ["0 0 * * *"]
   },
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
-  //   }
-  // ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
-  //   }
-  // ],
-  // "ai": {
-  //   "binding": "AI"
-  // },
-  // "observability": {
-  //   "enabled": true,
-  //   "head_sampling_rate": 1
-  // }
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "vars": {
+    "FRONTEND_URL": "https://letteralchemy.pages.dev",
+    "R2_ENDPOINT": "https://f761c6bd7b4a86d8def7a62d0088783e.r2.cloudflarestorage.com",
+    "R2_BUCKET_NAME": "letteralchemy-avatars",
+    "R2_PUBLIC_URL": "https://pub-e3d4525901b3465caa21844213cafb5c.r2.dev"
+  }
 }
