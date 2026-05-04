@@ -4,6 +4,7 @@ import auth from "./routes/auth";
 import posts from "./routes/posts";
 import promptAi from "./routes/promptAi";
 import users from "./routes/users";
+import comment from "./routes/comment";
 import { authmiddleware } from "./middleware/auth.middleware";
 import { ScheduledEvent, ExecutionContext } from "@cloudflare/workers-types";
 import { getPrisma } from "./db/prisma";
@@ -39,6 +40,7 @@ app.route("/api/v1", auth);
 app.route("/api/v1", posts);
 app.route("/api/v1/prompts", promptAi);
 app.route("/api/v1/users", users);
+app.route("/api/v1/comments", comment);
 
 app.onError((err, c) => {
   console.error(`ERROR: ${err.message}`);

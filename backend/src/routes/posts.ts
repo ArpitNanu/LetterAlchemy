@@ -174,6 +174,64 @@ posts.get("/public", async (c) => {
   }
 });
 
+// New Search Route
+posts.get("/public/search", async (c) => {
+  const prisma = getPrisma(c.env);
+  const query = c.req.query("q");
+
+  if (!query || query.length < 2) {
+    return c.json({
+      success: true,
+      data: [],
+    });
+  }
+
+  try {
+    const searchResults = await prisma.post.findMany({
+      where: {
+        published: true,
+        title: {
+          // 🎓 LOGIC: PostgreSQL Full-Text Search expects words to be joined by operators.
+          // This takes "My Post" and turns it into "My & Post" so the database 
+          // searches for titles containing BOTH words.
+          search: query.trim().split(/\s+/).join(" & "), 
+        } as any,
+      },
+      select: {
+        id: true,
+        title: true,
+      },
+      take: 10, // Limit results for the dropdown
+    });
+
+    return c.json({
+      success: true,
+      data: searchResults,
+    });
+  } catch (error) {
+    console.error("Search Error:", error);
+    // Fallback to simple contains if search vector fails (useful for partial words)
+    const fallbackResults = await prisma.post.findMany({
+      where: {
+        published: true,
+        title: {
+          contains: query,
+          mode: "insensitive",
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+      },
+      take: 10,
+    });
+    return c.json({
+      success: true,
+      data: fallbackResults,
+    });
+  }
+});
+
 // Public route to fetch a single post by ID
 posts.get("/public/:id", async (c) => {
   const prisma = getPrisma(c.env);

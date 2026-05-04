@@ -118,10 +118,6 @@ users.post("/upload-url", async (c) => {
         accessKeyId: c.env.R2_ACCESS_KEY_ID,
         secretAccessKey: c.env.R2_SECRET_ACCESS_KEY,
       },
-      // Disable auto-checksum: SDK v3 adds x-amz-checksum-crc32 by default.
-      // These unsigned headers break R2's signature validation on presigned URLs.
-      requestChecksumCalculation: "when_required",
-      responseChecksumValidation: "when_required",
     });
 
     const command = new PutObjectCommand({
@@ -131,8 +127,16 @@ users.post("/upload-url", async (c) => {
     });
 
     // This URL expires in 60 seconds for security
-    // Increased from 60s → 300s to survive slow preflight handshakes
-    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
+    // unhoistableHeaders: tells the presigner to NOT embed checksum headers
+    // into the signed URL query params. AWS SDK v3 auto-adds x-amz-checksum-crc32
+    // by default, but R2 rejects presigned requests with unsigned extra headers.
+    const uploadUrl = await getSignedUrl(s3, command, {
+      expiresIn: 300,
+      unhoistableHeaders: new Set([
+        "x-amz-checksum-crc32",
+        "x-amz-sdk-checksum-algorithm",
+      ]),
+    });
 
     return c.json({
       success: true,
@@ -169,6 +173,34 @@ users.post("/update-avatar", async (c) => {
     });
   } catch (error) {
     console.error("Update Avatar Error:", error);
+    return c.json({ success: false, msg: "Database update failed" }, 500);
+  }
+});
+
+// 3. Partially update user profile (bio, links, etc.)
+users.patch("/update-profile", async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const body = await c.req.json();
+
+  // Only pick allowed fields — never blindly pass the whole body to Prisma
+  const allowedUpdates: { bio?: string } = {};
+  if (typeof body.bio === "string") allowedUpdates.bio = body.bio;
+
+  if (Object.keys(allowedUpdates).length === 0) {
+    return c.json({ success: false, msg: "No valid fields to update" }, 400);
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: allowedUpdates,
+      select: { bio: true },
+    });
+
+    return c.json({ success: true, data: updatedUser });
+  } catch (error) {
+    console.error("Update Profile Error:", error);
     return c.json({ success: false, msg: "Database update failed" }, 500);
   }
 });

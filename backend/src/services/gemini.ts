@@ -14,9 +14,7 @@ export async function summarizeHeadline(title: string, apiKey: string) {
           role: "user",
           parts: [
             {
-              text: `Act as an expert, creative writing assistant. I will provide you with a news headline.
-Analyze the headline and generate exactly 3 distinct, thought-provoking writing prompts inspired by its themes. Return valid JSON using the exact schema below. 
-
+              text: `Act as an expert, creative writing assistant. I will provide you with a news headline.Analyze the headline and generate exactly 3 distinct, thought-provoking writing prompts inspired by its themes. Return valid JSON using the exact schema below.
 Schema:
 [
   "String",

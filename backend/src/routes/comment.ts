@@ -5,6 +5,8 @@ import { Env } from "../types/env";
 import { getPrisma } from "../db/prisma";
 import { CommentSchema } from "../schemas/auth.schema";
 
+import { authmiddleware } from "../middleware/auth.middleware";
+
 const comment = new Hono<{
   Bindings: Env;
   Variables: {
@@ -12,77 +14,101 @@ const comment = new Hono<{
   };
 }>();
 
-comment.get("/post/:id/comments", async (c) => {
+// Public: Get all comments for a post
+comment.get("/:postId", async (c) => {
   const prisma = getPrisma(c.env);
-  const postId = Number(c.req.param("id"));
+  const postId = Number(c.req.param("postId"));
 
-  const getAllPosts = prisma.comment.findMany({
-    where: {
-      postId: postId,
-    },
-    select: {
-      text: true,
-    },
-  });
-  return c.json({ getAllPosts });
+  try {
+    const comments = await prisma.comment.findMany({
+      where: { postId },
+      include: {
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    // Map data to ensure authorId is at the top level for frontend convenience
+    const formattedComments = comments.map(c => ({
+      ...c,
+      authorId: c.authorId
+    }));
+    return c.json({ success: true, data: formattedComments });
+  } catch (error) {
+    return c.json({ success: false, message: "Failed to fetch comments" }, 500);
+  }
 });
 
-comment.post("posts/:id/comment", async (c) => {
+// Protected: Post a comment
+comment.post("/:postId", authmiddleware, async (c) => {
   const prisma = getPrisma(c.env);
   const body = await c.req.json();
-  const postId = Number(c.req.param("id"));
+  const postId = Number(c.req.param("postId"));
   const userId = Number(c.get("userId"));
+
   const validatedData = CommentSchema.safeParse(body);
   if (!validatedData.success) {
-    return c.json({ msg: "invalid data input" }, 400);
+    return c.json({ success: false, msg: "Invalid comment text" }, 400);
   }
+
   try {
-    const createPost = await prisma.comment.create({
+    const newComment = await prisma.comment.create({
       data: {
         text: validatedData.data.text,
         authorId: userId,
         postId: postId,
       },
-      select: {
-        text: true,
+      include: {
         author: {
           select: {
+            id: true,
             firstName: true,
             lastName: true,
+            avatar: true,
           },
         },
       },
     });
-    return c.json({
-      createPost,
-    });
-  } catch (error) {}
-});
-
-comment.patch("post/:id/comment/edit", async (c) => {
-  const prisma = getPrisma(c.env);
-  const userId = Number(c.get("userId"));
-  const commentId = Number(c.req.param("id"));
-});
-
-comment.delete("post/:id/comments", async (c) => {
-  const prisma = getPrisma(c.env);
-  const userId = Number(c.get("userId"));
-  const commentId = Number(c.req.param("id"));
-  const commentFind = prisma.comment.findFirst({
-    where: {
-      id: commentId,
-      authorId: userId,
-    },
-  });
-  if (commentFind == null) {
-    return c.json({ msg: "user is not allow to delete" });
-  } else {
-    const commentDelete = prisma.comment.delete({
-      where: {
-        id: commentId,
-      },
-    });
-    return c.json({ msg: "user has been deleted successfully" });
+    return c.json({ success: true, data: newComment });
+  } catch (error) {
+    return c.json({ success: false, message: "Failed to post comment" }, 500);
   }
 });
+
+// Protected: Delete a comment
+comment.delete("/:id", authmiddleware, async (c) => {
+  const prisma = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const commentId = Number(c.req.param("id"));
+
+  try {
+    const commentRecord = await prisma.comment.findFirst({
+      where: {
+        id: commentId,
+        authorId: userId,
+      },
+    });
+
+    if (!commentRecord) {
+      return c.json({ success: false, msg: "Unauthorized or comment not found" }, 403);
+    }
+
+    await prisma.comment.delete({
+      where: { id: commentId },
+    });
+
+    return c.json({ success: true, msg: "Comment deleted successfully" });
+  } catch (error) {
+    return c.json({ success: false, message: "Failed to delete comment" }, 500);
+  }
+});
+
+export default comment;
