@@ -9,11 +9,11 @@ export const Layout = () => {
         <TopBar />
       </header>
 
-      <div className="grid grid-cols-[200px_minmax(900px,1fr)] flex-1 overflow-hidden">
-        <nav className="border-2 border-t-0 border-l-0 border-b-0 border-r-border-subtle overflow-y-auto"> {/* remove scrollbar of sidebar */}
+      <div className="grid grid-cols-[240px_1fr] flex-1 overflow-hidden">
+        <nav className="border-r border-border-subtle overflow-y-auto bg-sidebar-bg"> 
           <SideBar />
         </nav>
-        <main className="overflow-hidden h-full">  {/* for remove scrollbar of main content*/}
+        <main className="overflow-hidden h-full bg-page-bg">
           <Outlet />
         </main>
       </div>

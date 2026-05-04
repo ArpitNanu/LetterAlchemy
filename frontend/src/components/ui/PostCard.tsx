@@ -75,7 +75,7 @@ const PostItem = ({ post }: { post: Post }) => {
   return (
     <div
       onClick={() => navigate(`/post/${post.id}`)}
-      className="group flex flex-col py-8 border border-transparent border-b-border-subtle last:border-0 hover:border-green-500 hover:bg-brand-surface/30 px-6 transition-all rounded-xl cursor-pointer"
+      className="group flex flex-col py-8 border-y border-transparent border-b-border-subtle hover:border-brand-primary/40 hover:bg-brand-surface px-6 transition-all rounded-xl cursor-pointer"
     >
       <div className="flex items-center gap-2 mb-3">
         <div className="w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center text-[10px] font-bold text-brand-primary">

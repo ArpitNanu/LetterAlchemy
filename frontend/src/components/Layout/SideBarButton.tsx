@@ -24,14 +24,17 @@ export const SideBarButton = ({
     <div 
       onClick={() => navigate(path)} 
       className={cn(
-        "flex items-center gap-2 w-full p-2 rounded-sm cursor-pointer transition-colors duration-200",
+        "flex items-center gap-3 w-full px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 group",
         isActive 
-          ? "bg-[#caecbc] text-black " 
-          : "hover:bg-[#caecbc] hover:text-brand-primary text-text-muted"
+          ? "bg-brand-surface text-brand-primary font-semibold shadow-sm" 
+          : "hover:bg-brand-surface/50 text-text-muted hover:text-brand-primary"
       )}
     >
-      <span className={isActive ? "text-black" : "text-brand-primary"}>{icon}</span>
-      <span>{name}</span>
+      <span className={cn(
+        "transition-transform group-hover:scale-110",
+        isActive ? "text-brand-primary" : "text-text-muted group-hover:text-brand-primary"
+      )}>{icon}</span>
+      <span className="text-sm">{name}</span>
     </div>
   );
 };
