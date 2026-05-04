@@ -8,18 +8,22 @@ export const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const { state, dispatch } = useAuth();
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    if (errorMessage) setErrorMessage("");
   };
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    if (errorMessage) setErrorMessage("");
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     dispatch({ type: "LOGIN_START" });
+    setErrorMessage("");
     //console.log("form", { email, password });
     const userForm = {
       email: email,
@@ -38,6 +42,7 @@ export const LoginPage = () => {
     } catch (error: any) {
       const message = error.response?.data?.message || "Login Failed";
       dispatch({ type: "LOGIN_FAILED", payload: message });
+      setErrorMessage(message);
     }
   };
   return (
@@ -52,6 +57,12 @@ export const LoginPage = () => {
             className="w-full max-w-sm flex flex-col gap-5"
           >
             <h2 className="text-2xl font-semibold text-center">Login</h2>
+
+            {errorMessage && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-200">
+                {errorMessage}
+              </div>
+            )}
 
             <Input
               type="text"
@@ -81,7 +92,7 @@ export const LoginPage = () => {
                   : "bg-brand-primary hover:bg-brand-primary/90"
               }`}
             >
-              Sign in
+              {state.isLoading ? "Signing in..." : "Sign in"}
             </button>
           </form>
         </div>

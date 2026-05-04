@@ -16,17 +16,21 @@ export const SigupPage = () => {
     bio: "",
     socialLinks: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
   const { state, dispatch } = useAuth();
+  
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     setForm({
       ...form,
       [event.target.name]: event.target.value,
     });
+    if (errorMessage) setErrorMessage("");
   };
 
   const handleSubmit = async (event: any) => {
     event?.preventDefault();
     dispatch({ type: "LOGIN_START" });
+    setErrorMessage("");
 
     const reponse = SignupSchema.safeParse(form);
     try {
@@ -37,7 +41,8 @@ export const SigupPage = () => {
           type: "LOGIN_FAILED",
           payload: globalMessage,
         });
-        return console.error();
+        setErrorMessage(globalMessage);
+        return;
       } else {
         const data = await signUp(reponse.data);
         dispatch({
@@ -49,8 +54,11 @@ export const SigupPage = () => {
         });
         navigate("/home");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log("Signup error", error);
+      const message = error.response?.data?.error || error.response?.data?.message || "Signup Failed";
+      dispatch({ type: "LOGIN_FAILED", payload: message });
+      setErrorMessage(message);
     }
   };
 
@@ -68,6 +76,12 @@ export const SigupPage = () => {
             <h2 className="text-2xl font-semibold text-center mb-2">
               Create Account
             </h2>
+
+            {errorMessage && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-200">
+                {errorMessage}
+              </div>
+            )}
 
             <div className="flex gap-2">
               <Input
@@ -120,7 +134,7 @@ export const SigupPage = () => {
                   : "bg-green-500 hover:bg-green-600"
               }`}
             >
-              Create Account
+              {state.isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
         </div>
