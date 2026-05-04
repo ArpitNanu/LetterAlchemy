@@ -41,7 +41,10 @@ export const LandingPage = () => {
           <button onClick={() => navigate("/editor/new")} className="flex items-center gap-2 bg-brand-primary text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-brand-highlight transition-all shadow-sm">
             Start Writing <ArrowRight className="w-3.5 h-3.5" />
           </button>
-          <button className="flex items-center gap-2 bg-white border border-border-subtle text-text-main px-5 py-2 rounded-full text-sm font-medium hover:border-brand-primary transition-all shadow-sm">
+          <button 
+            onClick={() => navigate("/home")}
+            className="flex items-center gap-2 bg-white border border-border-subtle text-text-main px-5 py-2 rounded-full text-sm font-medium hover:border-brand-primary transition-all shadow-sm"
+          >
             Explore the Grid
           </button>
         </div>
