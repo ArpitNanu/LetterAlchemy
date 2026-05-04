@@ -11,7 +11,7 @@ const UserDropdown = ({ name, email, avatarUrl }: UserProfileProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const { dispatch } = useAuth();
-  const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLogout = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/login");
   };

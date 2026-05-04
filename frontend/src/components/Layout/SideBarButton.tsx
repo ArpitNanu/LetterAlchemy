@@ -11,6 +11,7 @@ export const SideBarButton = ({
   path: string;
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   // --- 🎓 ARCHITECTURE LEARNING MOMENT: Dynamic Styling ---
   // 1. location.pathname: React Router's way of telling us exactly which URL the user is on.
   // 2. isActive: We compare the current URL (location.pathname) with the button's destination (path).

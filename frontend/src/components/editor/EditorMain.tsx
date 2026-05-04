@@ -1,5 +1,5 @@
 import { Editor, EditorContent } from "@tiptap/react";
-import { FloatingMenu, BubbleMenu } from "@tiptap/react/menus";
+import { BubbleMenu } from "@tiptap/react/menus";
 import { Bold, Italic, Strikethrough } from "lucide-react";
 
 type Props = {

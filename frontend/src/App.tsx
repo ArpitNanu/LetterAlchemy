@@ -21,15 +21,29 @@ export const App = () => {
         <Route element={<Layout />}>
           <Route path="/home" index element={<HomePage />} />
 
-          <Route path="/bookmark" element={<Bookmark />} />
+          <Route
+            path="/bookmark"
+            element={
+              <ProtectedRoute>
+                <Bookmark />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* make book,pro, dash, protected later,*/}
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/dashboard"
             element={
-              <Dashboard />
-              //bcuz it's like bouncer for dashboard
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
             }
           />
           <Route path="/post/:id" element={<ReaderPage />} />
@@ -39,11 +53,32 @@ export const App = () => {
 
         <Route path="/signup" element={<SigupPage />} />
 
-        <Route path="/editor/new" element={<EditorPage />} />
+        <Route
+          path="/editor/new"
+          element={
+            <ProtectedRoute>
+              <EditorPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/editor/:id" element={<EditorPage />} />
+        <Route
+          path="/editor/:id"
+          element={
+            <ProtectedRoute>
+              <EditorPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/editor" element={<EditorPage />} />
+        <Route
+          path="/editor"
+          element={
+            <ProtectedRoute>
+              <EditorPage />
+            </ProtectedRoute>
+          }
+        />
         {/* <Route path="/reader" element={<FocusMode />} /> */}
       </Routes>
     </>
