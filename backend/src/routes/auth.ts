@@ -59,9 +59,15 @@ auth.post("/signup", async (c) => {
         );
       }
     }
-  } catch (error) {
+  // --- 🎓 ARCHITECTURE LEARNING MOMENT: Error Unmasking ---
+  // Previously, this catch block returned a generic 401 (Unauthorized).
+  // 1. MASKING: Returning 401 for system crashes makes it look like a login issue.
+  // 2. UNMASKING: Returning 500 + error.message allows us to see exactly what 
+  //    failed in the cloud (e.g., DB connection or missing JWT_SECRET).
+  // -------------------------------------------------------
+  } catch (error: any) {
     console.error(error);
-    return c.json({ error: "Internal Server Error" }, 401);
+    return c.json({ error: "Internal Server Error", details: error.message }, 500);
   } finally {
     console.log("signup request finished");
   }
@@ -75,7 +81,7 @@ auth.post("/signin", async (c) => {
         {
           message: "enter valid username/password",
         },
-        401,
+        400,
       );
     } else {
       const prisma = getPrisma(c.env);
@@ -95,7 +101,7 @@ auth.post("/signin", async (c) => {
           {
             message: "Invalid email or password",
           },
-          400,
+          401,
         );
       } else {
         const storeHash = userData.password;
@@ -123,9 +129,13 @@ auth.post("/signin", async (c) => {
         }
       }
     }
-  } catch (error) {
+  // --- 🎓 ARCHITECTURE LEARNING MOMENT: Status Code Specificity ---
+  // We use 500 here to indicate a SERVER-SIDE failure, distinguishing it 
+  // from a 401 which would mean the user's password was simply wrong.
+  // -------------------------------------------------------
+  } catch (error: any) {
     console.error(error);
-    return c.json({ msg: "incorrect input" }, 401);
+    return c.json({ msg: "Internal Server Error", details: error.message }, 500);
   }
 });
 

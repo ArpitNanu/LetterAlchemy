@@ -10,7 +10,12 @@ const promptAi = new Hono<{
   };
 }>();
 
-promptAi.get("/", async (c) => {
+// --- 🎓 ARCHITECTURE LEARNING MOMENT: The Slash Trap ---
+// We use "" (empty string) instead of "/" here.
+// If the parent mount is "/api/v1/prompts", then "" matches it exactly.
+// If we used "/", the URL would have to be "/api/v1/prompts/" (with a slash).
+// -------------------------------------------------------
+promptAi.get("", async (c) => {
   const prisma = getPrisma(c.env);
   try {
     const prompt = await prisma.newsHeadline.findMany({
@@ -33,9 +38,9 @@ promptAi.get("/", async (c) => {
     msg:"headline fetch successfully",
     data:{prompt} 
   });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error)
-    return c.json({ error: "Failed to fetch prompts" }, 500);
+    return c.json({ error: "Failed to fetch prompts", details: error.message }, 500);
   }
 });
 

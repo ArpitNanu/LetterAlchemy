@@ -18,11 +18,14 @@ app.use(
   async (c, next) => {
     const corsMiddleware = cors({
       origin: (origin) => {
-        // Allow local development and the production frontend URL
-        if (origin === "http://localhost:5173" || origin === c.env.FRONTEND_URL) {
+        const allowedOrigins = ["http://localhost:5173", c.env.FRONTEND_URL];
+        
+        // Check if the current origin matches (handling potential trailing slashes)
+        if (origin && (allowedOrigins.includes(origin) || allowedOrigins.includes(origin.replace(/\/$/, "")))) {
           return origin;
         }
-        // Fallback to production URL if origin is missing (rare)
+        
+        // Default to the production frontend URL
         return c.env.FRONTEND_URL;
       },
       allowHeaders: ["Content-Type", "Authorization"],
