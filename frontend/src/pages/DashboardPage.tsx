@@ -71,7 +71,7 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="bg-essay-bg min-h-screen p-6 rounded-xl m-4 overflow-y-auto">
+    <div className="bg-essay-bg h-[calc(100%-2rem)] p-6 rounded-xl m-4 overflow-y-auto">
       <h2 className="text-2xl font-bold text-brand-primary mb-1">
         Your Sanctuary
       </h2>
