@@ -36,6 +36,7 @@ export const EditorPage = () => {
   const [content, setContent] = useState<any>(EMPTY_DOC);
 
   const [draftId, setDraftId] = useState<number | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [isHydrating, setIsHydrating] = useState(true);
@@ -118,7 +119,7 @@ export const EditorPage = () => {
 
       // Perform the publish action. The backend now returns the generated slug!
       const publishRes = await publishingDraft(draftId);
-      
+
       if (publishRes.success && publishRes.data.slug) {
         // Redirect to the new human-readable slug URL
         navigate(`/post/${publishRes.data.slug}`);
@@ -144,8 +145,12 @@ export const EditorPage = () => {
     // Only skip auto-save if BOTH title AND content are empty
     if (!title.trim() && isContentEmpty) return;
 
+    // As soon as changes are detected, we can indicate that saving will happen soon
+    // Or we can wait for the actual request. Let's indicate "Saving..." when the request starts.
+
     const timeout = setTimeout(async () => {
       try {
+        setSaveStatus("saving");
         // Always send safe content (never null)
 
         const safeContent = content && content.content ? content : EMPTY_DOC;
@@ -157,12 +162,15 @@ export const EditorPage = () => {
           setDraftId(res.data.id);
 
           setCreatingDraft(false);
+          setSaveStatus("saved");
           navigate("/editor", { replace: true });
         } else if (draftId) {
           await updateDraft(draftId, { title, content: safeContent });
+          setSaveStatus("saved");
         }
       } catch (error) {
         console.error("Auto-save failed:", error);
+        setSaveStatus("error");
       }
     }, 1000);
 
@@ -178,13 +186,21 @@ export const EditorPage = () => {
           <div className="flex justify-center items-center mb-4 sticky top-0 z-10 bg-gray-50 py-2 gap-4">
             <Logo className="w-6 h-6 text-brand-primary" />
             <MenuBar />
-            <Button
-              className=" cursor-pointer bg-brand-highlight border-brand-primary text-black text-md hover:bg-brand-primary hover:text-green-50 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
-              onClick={handlePublished}
-              disabled={publishing}
-            >
-              Publish
-            </Button>
+
+            <div className="flex items-center gap-4">
+              <span className="text-xs text-gray-400 font-medium min-w-[80px] text-right">
+                {saveStatus === "saving" && "Saving..."}
+                {saveStatus === "saved" && "Draft saved"}
+                {saveStatus === "error" && "Save failed"}
+              </span>
+              <Button
+                className=" cursor-pointer bg-brand-highlight border-brand-primary text-black text-md hover:bg-brand-primary hover:text-green-50 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={handlePublished}
+                disabled={publishing}
+              >
+                Publish
+              </Button>
+            </div>
           </div>
 
           <Title value={title} handleTitleChange={setTitle} />
@@ -197,3 +213,4 @@ export const EditorPage = () => {
     </EditorContext.Provider>
   );
 };
+
