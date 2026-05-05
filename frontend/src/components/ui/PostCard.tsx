@@ -6,6 +6,10 @@ import { toggleLike, toggleBookmark } from "@/api/postApi";
 type Post = {
   id: string;
   title: string;
+  // slug is the URL-safe string we now use for navigation.
+  // It's optional (?) because old/unpublished posts may still have null slugs.
+  // When it's null, we fall back to using the numeric id.
+  slug?: string;
   createdAt: string;
   author?: {
     firstName: string;
@@ -30,7 +34,9 @@ const PostItem = ({ post }: { post: Post }) => {
 
   const handleCommentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/post/${post.id}`);
+    // Use slug if available, otherwise fall back to id (for old posts with no slug yet).
+    // post.slug ?? post.id means: "use slug if it's not null/undefined, else use id"
+    navigate(`/post/${post.slug ?? post.id}`);
   };
 
   const handleLike = async (e: React.MouseEvent) => {
@@ -74,7 +80,9 @@ const PostItem = ({ post }: { post: Post }) => {
 
   return (
     <div
-      onClick={() => navigate(`/post/${post.id}`)}
+      // Navigate to the reader using slug if available, otherwise fall back to id.
+      // This ensures old posts (with no slug yet) still work.
+      onClick={() => navigate(`/post/${post.slug ?? post.id}`)}
       className="group flex flex-col py-8 border-y border-transparent border-b-border-subtle hover:border-brand-primary/40 hover:bg-brand-surface px-6 transition-all rounded-xl cursor-pointer"
     >
       <div className="flex items-center gap-2 mb-3">
@@ -88,7 +96,12 @@ const PostItem = ({ post }: { post: Post }) => {
 
       <div className="flex justify-between gap-8">
         <div className="flex-1 flex flex-col gap-3">
-          <Link to={`/post/${post.id}`} onClick={(e) => e.stopPropagation()}>
+          {/* 
+            Link 'to' uses slug when available.
+            This is what actually makes the URL say /post/my-post instead of /post/42.
+            e.stopPropagation() prevents the parent div's onClick from also firing.
+          */}
+          <Link to={`/post/${post.slug ?? post.id}`} onClick={(e) => e.stopPropagation()}>
             <h2 className="text-2xl font-extrabold text-text-main group-hover:text-brand-primary transition-colors leading-tight">
               {post.title}
             </h2>

@@ -46,7 +46,14 @@ export const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/post/:id" element={<ReaderPage />} />
+          {/* 
+            WHY :slug instead of :id?
+            React Router reads the URL segment after /post/ and puts it in useParams().
+            If we write :id,  useParams() gives us { id: "42" }        ← number as string
+            If we write :slug, useParams() gives us { slug: "my-post" } ← human readable
+            The name here MUST match what we call useParams() with in ReaderPage.
+          */}
+          <Route path="/post/:slug" element={<ReaderPage />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />

@@ -116,9 +116,16 @@ export const EditorPage = () => {
       // to ensure the 500ms debounce doesn't miss the last keystroke.
       await updateDraft(draftId, { title, content });
 
-      // Perform the publish action
-      await publishingDraft(draftId);
-      navigate(`/post/${draftId}`);
+      // Perform the publish action. The backend now returns the generated slug!
+      const publishRes = await publishingDraft(draftId);
+      
+      if (publishRes.success && publishRes.data.slug) {
+        // Redirect to the new human-readable slug URL
+        navigate(`/post/${publishRes.data.slug}`);
+      } else {
+        // Fallback to ID if something goes wrong with the slug
+        navigate(`/post/${draftId}`);
+      }
     } catch (error) {
       console.error("Publishing failed:", error);
     } finally {

@@ -4,7 +4,10 @@ import { CommentList } from "@/components/ui/CommentList";
 import { FocusMode } from "@/components/Reader/FocusMode";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { getPublicPostById } from "@/api/postApi";
+// getPublicPostBySlug is our NEW API function.
+// The old getPublicPostById looked up posts by their numeric DB ID.
+// Now we look up by the human-readable slug string instead.
+import { getPublicPostBySlug } from "@/api/postApi";
 import { getComments, createComment, deleteComment } from "@/api/commentApi";
 import { useAuth } from "@/context/AuthContext";
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -31,7 +34,11 @@ export const ReaderPage = () => {
   const [comments, setComments] = useState<any[]>([]);
   const { state: authState } = useAuth();
 
-  const { id } = useParams();
+  // useParams() reads the dynamic segment from the current URL.
+  // Our route is defined as /post/:slug in App.tsx.
+  // So for URL /post/my-first-post, this gives us: { slug: "my-first-post" }
+  // We destructure 'slug' — this name MUST match the :slug in App.tsx.
+  const { slug } = useParams();
   const hasHydrated = useRef(false);
 
   const editor = useEditor({
@@ -41,33 +48,46 @@ export const ReaderPage = () => {
   });
 
   useEffect(() => {
-    const postByid = async () => {
+    const postBySlug = async () => {
       try {
-        const res = await getPublicPostById(id);
+        // Call the NEW API function with the slug string from the URL.
+        // e.g., if URL is /post/my-first-post, slug = "my-first-post"
+        const res = await getPublicPostBySlug(slug);
         if (res.success) {
           setPost(res.data);
+          // NOTE: After this setPost, post.id is now populated with the
+          // REAL numeric DB id. We use this id for comments below,
+          // because the comment API still works with numeric post IDs.
         }
       } catch (error) {
         console.error("error while fetching post ", error);
       }
     };
-    postByid();
-  }, [id]);
+    postBySlug();
+  // Re-run this effect whenever the slug in the URL changes.
+  // This handles navigating directly between /post/slug-a and /post/slug-b.
+  }, [slug]);
 
   useEffect(() => {
     const fetchComments = async () => {
-      if (!id) return;
-      const res = await getComments(Number(id));
+      // post.id is the numeric DB id populated after the post fetch above.
+      // We wait for it to be non-zero before fetching comments.
+      // This prevents calling getComments(0) on first render before the post loads.
+      if (!post.id) return;
+      const res = await getComments(post.id);
       if (res.success) {
         setComments(res.data);
       }
     };
     fetchComments();
-  }, [id]);
+  // Depend on post.id — this effect runs AFTER the post is loaded.
+  }, [post.id]);
 
   const handleCommentSubmit = async (text: string) => {
-    if (!id) return;
-    const res = await createComment(Number(id), text);
+    // post.id is available from state after the post has loaded.
+    // No need to parse from the URL anymore — the slug URL has no number in it.
+    if (!post.id) return;
+    const res = await createComment(post.id, text);
     if (res.success) {
       setComments((prev) => [res.data, ...prev]);
       setPost((prev) => ({

@@ -5,7 +5,10 @@ import { searchPublicPosts } from "@/api/postApi";
 
 const SearchBox = () => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<{ id: number; title: string }[]>([]);
+  // The results array now includes 'slug' alongside id and title.
+  // slug comes from our backend search route — we'll ensure it's returned there.
+  // slug is optional (?) because old posts may not have one yet.
+  const [results, setResults] = useState<{ id: number; title: string; slug?: string }[]>([]);
   const [loading, setLoading] = useState(false);
   
   // 🎓 ARCHITECTURE: 'isOpen' controls the visibility of the search dropdown. 
@@ -58,10 +61,14 @@ const SearchBox = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelectResult = (id: number) => {
+  // handleSelectResult is called when the user clicks a search result.
+  // We navigate to the post using its slug.
+  // The nullish coalescing (??) means: if slug is null/undefined, fall back to id.
+  // This ensures backward compatibility for old posts that have no slug yet.
+  const handleSelectResult = (post: { id: number; slug?: string }) => {
     setIsOpen(false);
     setQuery("");
-    navigate(`/post/${id}`);
+    navigate(`/post/${post.slug ?? post.id}`);
   };
 
   return (
@@ -92,7 +99,9 @@ const SearchBox = () => {
               {results.map((post) => (
                 <button
                   key={post.id}
-                  onClick={() => handleSelectResult(post.id)}
+                  // Pass the whole post object so handleSelectResult
+                  // can choose between slug and id for the URL.
+                  onClick={() => handleSelectResult(post)}
                   className="w-full text-left px-4 py-3 hover:bg-brand-surface transition-colors flex flex-col gap-0.5 group"
                 >
                   <span className="text-sm font-medium text-text-main group-hover:text-brand-primary transition-colors">

@@ -44,6 +44,18 @@ export const getPublicPostById = async (id: string | undefined) => {
   return res.data;
 };
 
+// NEW: Fetches a post using its human-readable slug string.
+// This is now the primary function ReaderPage will use.
+// The backend route is GET /public/slug/:slug
+// e.g., getPublicPostBySlug("my-first-post") → hits /public/slug/my-first-post
+export const getPublicPostBySlug = async (slug: string | undefined) => {
+  // Guard clause: if no slug is provided (undefined/empty), bail early.
+  // This prevents a useless network request to /public/slug/undefined.
+  if (!slug) return { success: false, msg: "No slug provided" };
+  const res = await apiClient.get(`/public/slug/${slug}`);
+  return res.data;
+};
+
 export const getAiPrompts = async () => {
   const res = await apiClient.get("/prompts");
   return res.data;
