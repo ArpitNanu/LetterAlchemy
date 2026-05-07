@@ -16,7 +16,7 @@ const EditorMain = ({ editor }: Props) => {
         )}
         <EditorContent
           editor={editor}
-          className="prose max-w-none m-0 outline-none "
+          className="prose prose-xl max-w-none m-0 outline-none "
         />
       </div>
 

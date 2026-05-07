@@ -6,11 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://backend.arpit-verma-av.workers.dev" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
     <title>LetterAlchemy</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- STATIC APP SHELL (LCP Optimization) -->
+      <style>
+        body { margin: 0; background-color: #FAFAFA; }
+        .app-shell {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          font-family: 'Inter', sans-serif;
+        }
+        .app-shell-logo {
+          font-family: 'Newsreader', serif;
+          font-size: 2rem;
+          font-weight: 600;
+          color: #111827;
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      </style>
+      <div class="app-shell">
+        <div class="app-shell-logo">LetterAlchemy</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

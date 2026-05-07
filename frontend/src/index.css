@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+@plugin "@tailwindcss/typography"; 
+
+/* typography helps in making prose responsive on different screen sizes tell your story AND WHEN TEXT IS SMALL IN MOBILE IT TAKES 80% OF THE SCREEN */
 /* ----------------------------- */
 /* 🌙 Dark mode selector */
 /* ----------------------------- */
