@@ -14,5 +14,8 @@
     "R2_ENDPOINT": "https://f761c6bd7b4a86d8def7a62d0088783e.r2.cloudflarestorage.com",
     "R2_BUCKET_NAME": "letteralchemy-avatars",
     "R2_PUBLIC_URL": "https://pub-e3d4525901b3465caa21844213cafb5c.r2.dev"
+  },
+  "placement": {
+    "hostname": "ep-falling-shadow-adrhs9i7-pooler.c-2.us-east-1.aws.neon.tech"
   }
 }

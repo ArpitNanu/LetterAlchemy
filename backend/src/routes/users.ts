@@ -20,18 +20,50 @@ users.get("/profile", async (c) => {
   const userId = Number(c.get("userId"));
 
   try {
-    // 1. Fetch User Info (Name, Bio, Social Links)
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        firstName: true,
-        lastName: true,
-        email: true,
-        bio: true,
-        socialLinks: true,
-        avatar: true,
-      },
-    });
+    // Fire all database queries simultaneously using Promise.all
+    // Since userId is already authenticated, we can fetch stats alongside the user profile
+    const [
+      user,
+      draftsCount,
+      publishedCount,
+      viewsAgg,
+      totalLikes,
+      totalComments
+    ] = await Promise.all([
+      // 1. Fetch User Info (Name, Bio, Social Links)
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          bio: true,
+          socialLinks: true,
+          avatar: true,
+        },
+      }),
+      // 2. Count Drafts
+      prisma.post.count({
+        where: { authorId: userId, published: false },
+      }),
+      // 3. Count Published Posts
+      prisma.post.count({
+        where: { authorId: userId, published: true },
+      }),
+      // 4. Sum Total Views
+      prisma.post.aggregate({
+        where: { authorId: userId },
+        _sum: { views: true },
+      }),
+      // 5. Fetch Total Likes across all posts
+      prisma.like.count({
+        where: { post: { authorId: userId } },
+      }),
+      // 6. Fetch Total Comments across all posts
+      prisma.comment.count({
+        where: { post: { authorId: userId } },
+      })
+    ]);
 
     if (!user) {
       return c.json({ success: false, msg: "User not found" }, 404);
@@ -51,31 +83,7 @@ users.get("/profile", async (c) => {
     //    and sends back a tiny 2-byte number across the network. Extremely fast and memory efficient!
     // ---------------------------------------
 
-    // 2. Fetch Activity Imprint Stats
-    const draftsCount = await prisma.post.count({
-      where: { authorId: userId, published: false },
-    });
-
-    const publishedCount = await prisma.post.count({
-      where: { authorId: userId, published: true },
-    });
-
-    const viewsAgg = await prisma.post.aggregate({
-      where: { authorId: userId },
-      _sum: { views: true },
-    });
-    
     const totalViews = viewsAgg._sum.views || 0;
-    
-    // 3. Fetch Total Likes across all posts
-    const totalLikes = await prisma.like.count({
-      where: { post: { authorId: userId } },
-    });
-
-    // 4. Fetch Total Comments across all posts
-    const totalComments = await prisma.comment.count({
-      where: { post: { authorId: userId } },
-    });
 
     return c.json({
       success: true,
