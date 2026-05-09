@@ -13,7 +13,9 @@ export const HomePage = () => {
         const res = await getPublicPost();
         if (!res.success) return;
         setPost(res.data);
-      } catch (error) {}
+      } catch (error) {
+        console.error("Failed to fetch public posts:", error);
+      }
     };
     publicPost();
   }, []);

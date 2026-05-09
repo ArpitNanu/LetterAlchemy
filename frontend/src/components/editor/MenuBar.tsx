@@ -1,4 +1,4 @@
-import { useCurrentEditor, useEditorState } from "@tiptap/react";
+import { useCurrentEditor, useEditorState, Editor } from "@tiptap/react";
 import {
   Bold,
   Code,
@@ -45,9 +45,7 @@ const HEADING_ICONS = {
   p: { icon: Heading, label: "Heading" },
 } as const;
 
-export const MenuBar = () => {
-  const { editor } = useCurrentEditor();
-  if (!editor) return null;
+const MenuBarInner = ({ editor }: { editor: Editor }) => {
   const editorState = useEditorState({
     editor,
     selector: menuBarStateSelector,
@@ -283,4 +281,10 @@ export const MenuBar = () => {
       </div>
     </div>
   );
+};
+
+export const MenuBar = () => {
+  const { editor } = useCurrentEditor();
+  if (!editor) return null;
+  return <MenuBarInner editor={editor} />;
 };

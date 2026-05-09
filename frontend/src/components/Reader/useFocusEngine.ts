@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 /**
  * Sliding Window — returns 3 words before, the current word, and 3 words after.
@@ -26,22 +26,19 @@ type UseFocusEngineProps = {
 };
 
 export function useFocusEngine({ text, onExit }: UseFocusEngineProps) {
-  // --- Static data (useRef — no re-renders when set) ---
-  const wordsRef = useRef<string[]>([]);
-
   // --- Reactive state (useState — triggers re-renders for UI) ---
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(200);
 
-  // Parse words once when text changes
+  // Parse words once when text changes using useMemo
+  const words = useMemo(() => text.split(/\s+/).filter(Boolean), [text]);
+
+  // Reset index when text changes
   useEffect(() => {
-    wordsRef.current = text.split(/\s+/).filter(Boolean);
     setIndex(0);
     setIsPlaying(false);
   }, [text]);
-
-  const words = wordsRef.current;
   const totalWords = words.length;
   const delay = 60000 / wpm; // WPM → milliseconds
 

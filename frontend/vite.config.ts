@@ -10,4 +10,18 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          editor: ["@tiptap/react", "@tiptap/starter-kit", "@tiptap/pm"],
+          ui: ["lucide-react", "radix-ui"],
+        },
+      },
+    },
+  },
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
 });

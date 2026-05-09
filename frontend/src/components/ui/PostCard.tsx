@@ -55,7 +55,7 @@ const PostItem = ({ post }: { post: Post }) => {
         setIsLiked(prevLiked);
         setLikesCount(prevCount);
       }
-    } catch (error) {
+    } catch {
       setIsLiked(prevLiked);
       setLikesCount(prevCount);
     }
@@ -73,7 +73,7 @@ const PostItem = ({ post }: { post: Post }) => {
       if (!res.success) {
         setIsBookmarked(prevBookmarked);
       }
-    } catch (error) {
+    } catch {
       setIsBookmarked(prevBookmarked);
     }
   };

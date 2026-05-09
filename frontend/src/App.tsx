@@ -1,22 +1,24 @@
+import { lazy, Suspense } from "react";
 import { LoginPage } from "./pages/LoginPage";
 import { Route, Routes } from "react-router-dom";
 import { SigupPage } from "./pages/SignupPage";
-import { Dashboard } from "./pages/DashboardPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
-import { EditorPage } from "./pages/EditorPage";
 import { HomePage } from "./pages/HomePage";
 import { Layout } from "./components/Layout/Layout";
-import { Bookmark } from "./components/Bookmark";
-import { Profile } from "./pages/Profile";
-import { ReaderPage } from "./pages/ReaderPage";
 import { LandingPage } from "./pages/LandingPage";
-//import { FocusMode } from "./components/Reader/FocusMode";
+
+const Dashboard = lazy(() => import("./pages/DashboardPage").then(m => ({ default: m.Dashboard })));
+const EditorPage = lazy(() => import("./pages/EditorPage").then(m => ({ default: m.EditorPage })));
+const Bookmark = lazy(() => import("./components/Bookmark").then(m => ({ default: m.Bookmark })));
+const Profile = lazy(() => import("./pages/Profile").then(m => ({ default: m.Profile })));
+const ReaderPage = lazy(() => import("./pages/ReaderPage").then(m => ({ default: m.ReaderPage })));
 
 export const App = () => {
   return (
     <>
-      <Routes>
+      <Suspense fallback={<div className="flex items-center justify-center h-screen font-medium text-gray-500">Loading...</div>}>
+        <Routes>
         <Route path="/" index element={<LandingPage />} />
         <Route element={<Layout />}>
           <Route path="/home" index element={<HomePage />} />
@@ -87,7 +89,8 @@ export const App = () => {
           }
         />
         {/* <Route path="/reader" element={<FocusMode />} /> */}
-      </Routes>
+        </Routes>
+      </Suspense>
     </>
   );
 };
