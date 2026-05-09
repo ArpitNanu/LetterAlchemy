@@ -9,8 +9,8 @@ export const Layout = () => {
         <TopBar />
       </header>
 
-      <div className="grid grid-cols-[240px_1fr] flex-1 overflow-hidden">
-        <nav className="border-r border-border-subtle overflow-y-auto bg-sidebar-bg"> 
+      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] flex-1 overflow-hidden">
+        <nav className="hidden md:block border-r border-border-subtle overflow-y-auto bg-sidebar-bg"> 
           <SideBar />
         </nav>
         <main className="overflow-hidden h-full bg-page-bg">

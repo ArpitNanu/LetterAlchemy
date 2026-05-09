@@ -116,23 +116,23 @@ export const ReaderPage = () => {
   }, [editor, post.content]);
 
   return (
-    <div className="flex h-full overflow-hidden bg-page-bg">
+    <div className="flex h-screen overflow-hidden bg-page-bg">
       {/* Scrollable Reader Content */}
       <div className="flex-1 overflow-y-auto custom-scrollbar bg-essay-bg">
-        <div className="max-w-3xl mx-auto py-16 px-8 lg:px-12">
-          <header className="mb-12">
-            <h1 className="text-5xl font-extrabold text-text-main mb-6 leading-[1.1] tracking-tight">
+        <div className="max-w-3xl mx-auto py-10 md:py-16 px-5 md:px-12">
+          <header className="mb-10 md:mb-12">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-text-main mb-6 leading-[1.1] tracking-tight">
               {post.title}
             </h1>
             <div className="flex items-center gap-4 text-text-muted border-b border-border-subtle pb-8">
-              <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold shrink-0">
                 {post.author.firstName?.[0]}
               </div>
-              <div>
-                <p className="font-semibold text-text-main">
+              <div className="min-w-0">
+                <p className="font-semibold text-text-main truncate">
                   {post.author.firstName} {post.author.lastName}
                 </p>
-                <p className="text-xs uppercase tracking-widest">
+                <p className="text-[10px] md:text-xs uppercase tracking-widest">
                   {new Date(post.createdAt).toLocaleDateString("en-US", { month: 'long', day: 'numeric', year: 'numeric' })} • {post._count.likes} Likes
                 </p>
               </div>
@@ -141,18 +141,18 @@ export const ReaderPage = () => {
               onClick={() => setFocusActive(true)}
               disabled={!editor || !post.content}
               className="
-                mt-6 flex items-center gap-2 px-4 py-2 rounded-lg
-                bg-brand-primary/10 text-brand-primary text-sm font-medium
-                hover:bg-brand-primary/20 transition-colors cursor-pointer
-                disabled:opacity-30 disabled:cursor-not-allowed
+                mt-8 flex items-center gap-2 px-6 py-3 rounded-xl
+                bg-brand-primary/10 text-brand-primary text-sm font-bold
+                hover:bg-brand-primary/20 transition-all cursor-pointer
+                disabled:opacity-30 disabled:cursor-not-allowed w-full sm:w-auto justify-center
               "
             >
-              <Maximize size={16} />
+              <Maximize size={18} />
               Focus Mode
             </button>
           </header>
 
-          <article className="tiptap-global mb-20 min-h-[500px]">
+          <article className="tiptap-global mb-20 min-h-[400px] text-lg leading-relaxed">
             {editor ? (
               <EditorContent editor={editor} />
             ) : (
@@ -167,7 +167,7 @@ export const ReaderPage = () => {
               <div className="p-2 bg-brand-primary/10 rounded-lg text-brand-primary">
                 <MessageSquare size={20} />
               </div>
-              <h3 className="text-2xl font-bold text-text-main">
+              <h3 className="text-xl md:text-2xl font-bold text-text-main">
                 Responses <span className="text-text-muted font-normal ml-1">({post._count.comments})</span>
               </h3>
             </div>
@@ -183,7 +183,7 @@ export const ReaderPage = () => {
         </div>
       </div>
 
-      {/* AI Sidebar - Sticky within the reader view */}
+      {/* AI Sidebar - Hidden on mobile/tablet, shown on desktop */}
       <aside className="w-[350px] hidden xl:block border-l border-border-subtle bg-sidebar-bg/30 p-6 overflow-y-auto">
         <div className="bg-surface p-6 rounded-2xl border border-border-subtle shadow-sm mb-6">
           <div className="flex items-center gap-2 mb-3">
