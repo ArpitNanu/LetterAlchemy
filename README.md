@@ -13,8 +13,8 @@
 
 | Service    | URL                                     |
 |------------|-----------------------------------------|
-| Frontend   | _Coming soon — Vercel deployment_       |
-| Backend    | _Coming soon — Cloudflare Workers_      |
+| Frontend   | [letteralchemy.pages.dev](https://letteralchemy.pages.dev) |
+| Backend    | [backend.arpit-verma-av.workers.dev](https://backend.arpit-verma-av.workers.dev) |
 
 ---
 
