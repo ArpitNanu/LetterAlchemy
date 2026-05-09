@@ -2,7 +2,8 @@ node_modules
 dist
 .build
 .env
-.md
+*.md
+!README.md
 .DS_Store
 .idea
 .vscode
