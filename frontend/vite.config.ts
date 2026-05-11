@@ -15,7 +15,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           react: ["react", "react-dom", "react-router-dom"],
-          editor: ["@tiptap/react", "@tiptap/starter-kit", "@tiptap/pm"],
+          editor: ["@tiptap/react", "@tiptap/starter-kit"],
           ui: ["lucide-react", "radix-ui"],
         },
       },

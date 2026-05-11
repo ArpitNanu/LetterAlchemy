@@ -20,11 +20,37 @@ export const LoginPage = () => {
     if (errorMessage) setErrorMessage("");
   };
 
+  const handleGuestLogin = async () => {
+    const guestEmail = "demo@example.com";
+    const guestPassword = "password123";
+
+    setEmail(guestEmail);
+    setPassword(guestPassword);
+
+    dispatch({ type: "LOGIN_START" });
+    setErrorMessage("");
+
+    try {
+      const data = await login({ email: guestEmail, password: guestPassword });
+      dispatch({
+        type: "LOGIN-SUCCESS",
+        payload: {
+          user: data.user,
+          token: data.token,
+        },
+      });
+      navigate("/home");
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Guest Login Failed";
+      dispatch({ type: "LOGIN_FAILED", payload: message });
+      setErrorMessage(message);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     dispatch({ type: "LOGIN_START" });
     setErrorMessage("");
-    //console.log("form", { email, password });
     const userForm = {
       email: email,
       password: password,
@@ -45,6 +71,7 @@ export const LoginPage = () => {
       setErrorMessage(message);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-100 to-gray-200 px-6">
       {/* CARD */}
@@ -84,16 +111,27 @@ export const LoginPage = () => {
               autoComplete="current-password"
             />
 
-            <button
-              type="submit"
-              className={`rounded-xl p-2 cursor-pointer text-white ${
-                state.isLoading
-                  ? "bg-gray-400"
-                  : "bg-brand-primary hover:bg-brand-primary/90"
-              }`}
-            >
-              {state.isLoading ? "Signing in..." : "Sign in"}
-            </button>
+            <div className="flex flex-col gap-3 mt-2">
+              <button
+                type="submit"
+                disabled={state.isLoading}
+                className={`rounded-xl p-2 cursor-pointer text-white font-medium transition-all ${
+                  state.isLoading
+                    ? "bg-gray-400"
+                    : "bg-brand-primary hover:bg-brand-primary/90 shadow-md"
+                }`}
+              >
+                {state.isLoading ? "Signing in..." : "Sign in"}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleGuestLogin}
+                className="rounded-xl p-2 cursor-pointer text-brand-primary border border-brand-primary/30 hover:bg-brand-primary/5 transition-all font-medium"
+              >
+                Try as Guest (Reviewer Mode)
+              </button>
+            </div>
           </form>
         </div>
 

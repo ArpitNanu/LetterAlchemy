@@ -1,9 +1,38 @@
-import { BookOpen, Sparkles, BookText, Zap, ArrowRight } from "lucide-react";
+import { BookOpen, Sparkles, BookText, Zap, ArrowRight, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { FeatureCard } from "@/components/ui/FeatureCard";
+import { useAuth } from "../context/AuthContext";
+import { login } from "../services/authService";
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const { state, dispatch } = useAuth();
+
+  /**
+   * REVIEWER MODE: Programmatic login for demo purposes.
+   * Reduces friction for interviewers by allowing one-click access 
+   * to the full platform using pre-seeded test credentials.
+   */
+  const handleGuestLogin = async () => {
+    const guestEmail = "demo@example.com";
+    const guestPassword = "password123";
+
+    dispatch({ type: "LOGIN_START" });
+    try {
+      const data = await login({ email: guestEmail, password: guestPassword });
+      dispatch({
+        type: "LOGIN-SUCCESS",
+        payload: {
+          user: data.user,
+          token: data.token,
+        },
+      });
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.error("Guest login failed");
+      dispatch({ type: "LOGIN_FAILED", payload: "Guest login failed" });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-text-main font-sans selection:bg-brand-primary/20 overflow-y-auto flex flex-col pb-10">
@@ -46,6 +75,16 @@ export const LandingPage = () => {
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white border border-border-subtle text-text-main px-8 py-3 rounded-full text-sm font-medium hover:border-brand-primary transition-all shadow-sm"
           >
             Explore the Grid
+          </button>
+          
+          {/* REVIEWER ACCESS: Quick entry point for stakeholders */}
+          <button 
+            onClick={handleGuestLogin}
+            disabled={state.isLoading}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#F1F3F0] text-brand-primary px-8 py-3 rounded-full text-sm font-bold hover:bg-brand-primary/10 transition-all border border-brand-primary/20"
+          >
+            <UserCircle className="w-4 h-4" />
+            {state.isLoading ? "Entering..." : "Try Demo"}
           </button>
         </div>
       </main>
