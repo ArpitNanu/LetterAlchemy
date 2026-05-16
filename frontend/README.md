@@ -1,74 +1,89 @@
-# LetterAlchemy — Modern Writing Platform
+# LetterAlchemy Frontend 🎨
 
-LetterAlchemy is a modern human-centered writing platform built for thoughtful storytelling and digital focus.
+> The user interface and client-side application for LetterAlchemy, built for speed, rich interactions, and progressive AI token streaming. ⚡️
 
-## Tech Stack
-- **Frontend**: React 19, TypeScript, Tailwind CSS 4
-- **Build Tool**: Vite
-- **Deployment**: Cloudflare Pages / Workers
-- **Database**: Prisma + Neon (PostgreSQL)
+---
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework:** React 19 + TypeScript ⚛️
+- **Build Tool:** Vite ⚡️
+- **Styling:** TailwindCSS v4 + shadcn/ui 🎨
+- **Rich Text Editor:** Tiptap v3 📝
+- **Deployment:** Cloudflare Pages (or Vercel) ☁️
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🏗️ Architecture & Flow
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The frontend is strictly responsible for the presentation layer, local state management, and real-time interaction rendering. It communicates with the Hono/Cloudflare backend via standard REST APIs and Server-Sent Events (SSE) for AI streaming.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```mermaid
+graph TD
+    %% Frontend Node Styling
+    classDef ui fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff;
+    classDef logic fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff;
+    classDef api fill:#f59e0b,stroke:#b45309,stroke-width:2px,color:#fff;
+    classDef external fill:#64748b,stroke:#334155,stroke-width:2px,color:#fff;
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+    User((👤 User)) --> |Interacts| Pages
+
+    subgraph "React Frontend Application"
+        Pages["📄 UI Pages<br/>(Home, Dashboard, Editor)"]:::ui
+        Editor["📝 Tiptap Editor<br/>(Rich Text + JSON extraction)"]:::ui
+        State["🧠 Local State & Context<br/>(Auth Context, JWT Storage)"]:::logic
+        APIClient["🔌 API Client<br/>(Axios / Fetch / SSE)"]:::api
+        
+        Pages --> Editor
+        Pages --> State
+        Editor -.-> |Debounced Auto-Save| APIClient
+        State -.-> |Provides Auth Token| APIClient
+    end
+
+    APIClient <--> |REST & SSE Streams| Backend["☁️ Hono Backend API"]:::external
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 🎯 Key Responsibilities:
+- **Editor & Auto-Save 💾:** Uses Tiptap for rich-text editing with a debounced 1-second auto-save to ensure work is never lost.
+- **AI Streaming UI (WIP) 🌊:** Capable of progressively rendering tokens streamed from the backend during AI rewrite or context operations.
+- **Authentication 🔐:** Manages JWT tokens securely on the client side (context/storage) to protect routes like the dashboard and editor.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Getting Started Locally
+
+### 1️⃣ Install Dependencies
+```bash
+npm install
+```
+
+### 2️⃣ Environment Variables
+Create a `.env` file in the root of the `frontend` folder.
+```env
+VITE_API_URL=http://localhost:8787
+```
+
+### 3️⃣ Run Development Server
+```bash
+npm run dev
+```
+The application will be available at `http://localhost:5173` 🌐.
+
+---
+
+## 📁 Folder Structure
+
+```text
+frontend/
+├── src/
+│   ├── App.tsx             # 🚦 Main routing and layout
+│   ├── pages/              # 📄 Page-level components (Editor, Home, Dashboard, etc.)
+│   ├── components/
+│   │   ├── editor/         # 📝 Tiptap specific components (Menu, Toolbar, Main)
+│   │   └── ui/             # 🧩 Reusable shadcn/ui elements
+│   ├── api/
+│   │   └── postApi.ts      # 🔌 Data fetching and mutation functions
+│   ├── context/
+│   │   └── AuthContext.tsx # 🔐 Global authentication state
+│   └── hooks/              # 🎣 Custom React hooks
 ```

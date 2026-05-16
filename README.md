@@ -68,43 +68,136 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 
 ## 🏗️ Architecture
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        LetterAlchemy System                            │
-│                                                                        │
-│  ┌──────────────────┐         ┌────────────────────────────────────┐  │
-│  │  React Frontend  │ ──JWT──▶│        Hono Backend                │  │
-│  │  (Vite + TS)     │◀──JSON──│  (Cloudflare Workers Edge)         │  │
-│  │                  │         │                                    │  │
-│  │  Pages:          │         │  Routes:                           │  │
-│  │  /               │         │  POST  /api/v1/signup              │  │
-│  │  /editor/new     │         │  POST  /api/v1/login               │  │
-│  │  /editor         │         │  POST  /create                     │  │
-│  │  /post/:id       │         │  PATCH /edit/:id                   │  │
-│  │  /dashboard      │         │  PATCH /publish/:id                │  │
-│  │  /profile        │         │  GET   /posts                      │  │
-│  │  /bookmark       │         │  GET   /posts/:id                  │  │
-│  └──────────────────┘         │  GET   /public                     │  │
-│                               │  POST  /ai/improve    (coming)     │  │
-│                               │  POST  /ai/tone       (coming)     │  │
-│                               │  POST  /ai/summary    (coming)     │  │
-│                               └──────────────┬─────────────────────┘  │
-│                                              │                         │
-│                               ┌──────────────▼─────────────────────┐  │
-│                               │  PostgreSQL (Neon) via Prisma       │  │
-│                               │                                    │  │
-│                               │  Tables:                           │  │
-│                               │  user · post · comment · like      │  │
-│                               │  newsHeadline · aiTweet            │  │
-│                               │  ai_logs (coming)                  │  │
-│                               │  prompt_configs (coming)           │  │
-│                               └────────────────────────────────────┘  │
-│                                                                        │
-│  ┌────────────────────────────────────────────────────────────────┐   │
-│  │  Cloudflare Cron (every minute)                                │   │
-│  │  → Fetch Reddit hot posts → Gemini summarize → Save to DB      │   │
-│  └────────────────────────────────────────────────────────────────┘   │
-└────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    %% Styling Definitions
+    classDef user fill:#64748b,stroke:#334155,stroke-width:2px,color:#fff;
+    classDef reactUI fill:#0284c7,stroke:#0369a1,stroke-width:2px,color:#fff;
+    classDef reactLogic fill:#0ea5e9,stroke:#0284c7,stroke-width:2px,color:#fff;
+    classDef honoRouter fill:#ea580c,stroke:#c2410c,stroke-width:2px,color:#fff;
+    classDef honoLogic fill:#f97316,stroke:#ea580c,stroke-width:2px,color:#fff;
+    classDef db fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff;
+    classDef ai fill:#059669,stroke:#047857,stroke-width:2px,color:#fff;
+
+    %% 👤 USER
+    User((👤 Writer / Reader)):::user
+
+    %% ==========================================
+    %% FRONTEND Architecture (Vite + React 19)
+    %% ==========================================
+    subgraph Frontend["💻 React Frontend Application"]
+        Router[🚦 React Router & App.tsx]:::reactLogic
+        AuthCtx[🔐 AuthContext & ProtectedRoute]:::reactLogic
+        
+        %% Pages
+        subgraph Pages["📄 UI Pages"]
+            Home[🏠 HomePage / LandingPage]:::reactUI
+            AuthPages[🔑 LoginPage / SignupPage]:::reactUI
+            Dashboard[📊 DashboardPage]:::reactUI
+            Profile[👤 ProfilePage]:::reactUI
+            Editor[📝 EditorPage & Tiptap Components]:::reactUI
+            Reader[📖 ReaderPage / PostPage]:::reactUI
+        end
+        
+        Router --> AuthPages
+        Router --> Home
+        Router --> AuthCtx
+        
+        AuthCtx -.->|JWT Validated| Dashboard
+        AuthCtx -.->|JWT Validated| Editor
+        AuthCtx -.->|JWT Validated| Profile
+        AuthCtx -.->|Public / Protected| Reader
+        
+        %% Editor Sub-components
+        subgraph EditorInternals["Editor Architecture"]
+            Tiptap[EditorMain / MenuBar]:::reactUI
+            AutoSave[⏱️ Debounced Auto-Save Hook]:::reactLogic
+            Editor --> Tiptap
+            Tiptap --> AutoSave
+        end
+        
+        APIClient[🔌 postApi.ts / api fetchers]:::reactLogic
+        AutoSave --> APIClient
+        Dashboard --> APIClient
+        Reader --> APIClient
+        AuthPages --> APIClient
+    end
+
+    User -->|Interacts| Router
+
+    %% ==========================================
+    %% BACKEND Architecture (Cloudflare Workers)
+    %% ==========================================
+    subgraph Backend["⚡ Cloudflare Edge Backend (Hono)"]
+        HonoIndex[🚀 index.ts Router]:::honoRouter
+        Middleware[🛡️ auth.middleware.ts<br/>(JWT Verification)]:::honoLogic
+        
+        %% Route Handlers
+        subgraph Routes["🛣️ API Route Controllers"]
+            AuthRoute[🔑 auth.ts<br/>/signup, /login]:::honoLogic
+            UserRoute[👤 users.ts<br/>/profile]:::honoLogic
+            PostRoute[📝 posts.ts<br/>/posts CRUD]:::honoLogic
+            CommentRoute[💬 comment.ts<br/>/comments]:::honoLogic
+            AIRoute[🧠 promptAi.ts<br/>/ai/improve]:::honoLogic
+        end
+        
+        HonoIndex --> AuthRoute
+        HonoIndex -->|Protected Routes| Middleware
+        
+        Middleware --> UserRoute
+        Middleware --> PostRoute
+        Middleware --> CommentRoute
+        Middleware --> AIRoute
+        
+        %% Services
+        GeminiService[🤖 gemini.ts Service Wrapper<br/>SSE & Streams]:::honoLogic
+        PrismaClient[🔗 db/prisma.ts<br/>ORM Client]:::honoLogic
+        
+        AIRoute --> GeminiService
+        
+        AuthRoute --> PrismaClient
+        UserRoute --> PrismaClient
+        PostRoute --> PrismaClient
+        CommentRoute --> PrismaClient
+    end
+
+    %% Network Connections
+    APIClient <==>|JSON REST / Fetch| HonoIndex
+    APIClient <..>|SSE Token Streams| GeminiService
+
+    %% ==========================================
+    %% DATABASE & EXTERNAL
+    %% ==========================================
+    subgraph External["🌍 External Services & DB"]
+        DB[(🐘 Neon Postgres DB)]:::db
+        GeminiAPI[🧠 Google Gemini AI Models]:::ai
+        
+        subgraph Tables["Schema Tables"]
+            schemaUser[user]:::db
+            schemaPost[post]:::db
+            schemaComment[comment]:::db
+            schemaLike[like]:::db
+            schemaNews[newsHeadline]:::db
+        end
+        
+        DB --- Tables
+    end
+
+    %% Service Connections
+    PrismaClient <==>|Accelerate/Pool| DB
+    GeminiService <==>|@google/genai| GeminiAPI
+
+    %% ==========================================
+    %% CRON / BACKGROUND
+    %% ==========================================
+    subgraph Background["⏰ Edge Cron Triggers"]
+        CronHandler[🔄 index.ts Cron Handler]:::honoLogic
+        RedditAPI[🌐 Reddit API]:::user
+        
+        CronHandler -->|1. Fetch Hot Posts| RedditAPI
+        CronHandler -->|2. Summarize| GeminiService
+        CronHandler -->|3. Save Headlines| PrismaClient
+    end
 ```
 
 ---
