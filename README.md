@@ -1,6 +1,6 @@
 # LetterAlchemy ✍️
 
-> A full-stack AI-augmented blogging platform — built to explore how LLMs can serve as an empathetic writing collaborator, not just an autocomplete engine.
+> An AI-native realtime writing and reading platform built on Cloudflare’s edge stack — exploring how low-latency AI systems can feel expressive, contextual, and human rather than simply functional.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-92%25-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![Hono](https://img.shields.io/badge/Backend-Hono%20%2B%20Cloudflare%20Workers-orange)](https://hono.dev/)
@@ -11,10 +11,10 @@
 
 ## Live Demo
 
-| Service    | URL                                     |
-|------------|-----------------------------------------|
-| Frontend   | [letteralchemy.pages.dev](https://letteralchemy.pages.dev) |
-| Backend    | [backend.arpit-verma-av.workers.dev](https://backend.arpit-verma-av.workers.dev) |
+| Service  | URL                                                                              |
+| -------- | -------------------------------------------------------------------------------- |
+| Frontend | [letteralchemy.pages.dev](https://letteralchemy.pages.dev)                       |
+| Backend  | [backend.arpit-verma-av.workers.dev](https://backend.arpit-verma-av.workers.dev) |
 
 ---
 
@@ -29,6 +29,7 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 ## Key Features
 
 ### Core Platform
+
 - ✅ **Auth** — JWT-based sign-up, login, protected routes
 - ✅ **Rich-Text Editor** — Tiptap v3 with bold, italic, headings, lists, blockquotes
 - ✅ **Auto-Save** — Debounced draft persistence (1s) — never lose work
@@ -38,6 +39,7 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 - ✅ **News Headlines** — Scheduled Cloudflare Worker fetches Reddit hot posts and AI-summarizes them via Gemini
 
 ### AI Features (in progress)
+
 - 🔄 **AI Writing Assistant** — Select text → LLM rewrites/improves inline with streaming
 - 🔄 **Tone Analyzer** — Classifies post tone: Empathetic / Aggressive / Neutral / Informative
 - 🔄 **Auto-Summary Generator** — On publish: 3-line TL;DR prepended to every post
@@ -50,16 +52,16 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 
 ## Tech Stack
 
-| Layer        | Technology                                                              |
-|--------------|-------------------------------------------------------------------------|
-| Frontend     | React 19, TypeScript, Vite, TailwindCSS v4, shadcn/ui, Tiptap v3      |
-| Backend      | Hono, TypeScript, Cloudflare Workers (edge runtime)                    |
-| Database     | PostgreSQL (Neon serverless), Prisma ORM + Accelerate                  |
-| AI           | Google Gemini API (`@google/genai`)                                    |
-| Auth         | JWT (custom middleware), bcryptjs                                       |
-| Validation   | Zod (shared schemas across FE and BE)                                  |
-| Scheduling   | Cloudflare Workers Cron Triggers                                        |
-| Deployment   | Frontend → Vercel · Backend → Cloudflare Workers                       |
+| Layer      | Technology                                                       |
+| ---------- | ---------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------- |
+| Frontend   | React 19, TypeScript, Vite, TailwindCSS v4, shadcn/ui, Tiptap v3 |
+| Backend    | Realtime AI                                                      | SSE Streaming, TransformStreams, Parallel AI Orchestration | Hono, TypeScript, Cloudflare Workers (edge runtime) |
+| Database   | PostgreSQL (Neon serverless), Prisma ORM + Accelerate            |
+| AI         | Google Gemini API (`@google/genai`)                              |
+| Auth       | JWT (custom middleware), bcryptjs                                |
+| Validation | Zod (shared schemas across FE and BE)                            |
+| Scheduling | Cloudflare Workers Cron Triggers                                 |
+| Deployment | Frontend → Vercel · Backend → Cloudflare Workers                 |
 
 ---
 
@@ -105,6 +107,31 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 ```
 
 ---
+
+---
+
+## Realtime AI Reader Pipeline (Experimental)
+
+LetterAlchemy now includes an experimental realtime AI reader pipeline focused on low-latency inference orchestration and progressive response delivery.
+
+Current backend architecture:
+
+- Cloudflare Workers AI for ultra-fast contextual summarisation
+- Gemini Flash for grounded long-form article Q&A
+- Parallel Promise.all-based orchestration to reduce blocking inference chains
+- Streaming token delivery using Server-Sent Events (SSE) and TransformStreams
+- Recursive Tiptap JSON extraction pipelines converting rich-text editor structures into AI-readable contextual article text
+- Latency-conscious separation between fast context generation and long-form grounded responses
+
+### Current Status
+
+- ✅ Backend orchestration implemented
+- ✅ Parallel AI execution working
+- ✅ Streaming backend infrastructure working
+- 🔄 Frontend progressive token rendering currently in development
+- 🔄 Voice interaction workflows planned
+
+The goal is to explore AI UX patterns where responsiveness itself becomes part of the product experience.
 
 ## Database Schema
 
@@ -175,6 +202,7 @@ LetterAlchemy/
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 20+
 - PostgreSQL database (or [Neon](https://neon.tech) free tier)
 - [Cloudflare account](https://dash.cloudflare.com) (free)
@@ -223,17 +251,17 @@ npm run dev        # starts on http://localhost:5173
 
 ### Backend (`.dev.vars`)
 
-| Variable         | Description                              |
-|------------------|------------------------------------------|
-| `DATABASE_URL`   | Neon PostgreSQL connection string        |
-| `JWT_SECRET`     | Secret for signing JWT tokens            |
-| `GEMINI_API_KEY` | Google Gemini API key                    |
+| Variable         | Description                       |
+| ---------------- | --------------------------------- |
+| `DATABASE_URL`   | Neon PostgreSQL connection string |
+| `JWT_SECRET`     | Secret for signing JWT tokens     |
+| `GEMINI_API_KEY` | Google Gemini API key             |
 
 ### Frontend (`.env`)
 
-| Variable       | Description               |
-|----------------|---------------------------|
-| `VITE_API_URL` | Backend API base URL      |
+| Variable       | Description          |
+| -------------- | -------------------- |
+| `VITE_API_URL` | Backend API base URL |
 
 ---
 
@@ -254,6 +282,8 @@ Every AI feature in LetterAlchemy is built with the same discipline required to 
 - **A/B Prompt Testing** — Run two prompt versions in parallel, compare quality scores, promote winner.
 - **RBI-Aware Tone Guardrails** — A compliance layer that intercepts AI output and validates it against defined constraints before delivery (inspired by fintech agent design).
 - **Voice-to-Post** — STT-powered dictation for writing blog posts hands-free.
+- **Realtime Voice Conversations** — Speech-to-text driven conversational article interaction workflows
+- **Persistent AI Reader Context** — Long-session memory for personalized contextual reading assistance
 
 ---
 
@@ -264,6 +294,8 @@ Every AI feature in LetterAlchemy is built with the same discipline required to 
 - Why streaming responses are not a nice-to-have — they are a latency contract with the user
 - How `Promise.allSettled` prevents one failed fetch from crashing parallel AI calls
 - Why Tiptap's JSON content model is the right format for structured AI rewrites (you can surgically replace a node, not just append text)
+- Why progressive streaming architectures fundamentally change perceived AI responsiveness and product feel
+- How separating fast contextual inference from slower grounded responses improves realtime UX design
 
 ---
 
@@ -279,4 +311,15 @@ MIT
 
 ---
 
-> _"The best writing tool is the one that gets out of your way — until you need it."_
+---
+
+## Engineering Direction
+
+LetterAlchemy is increasingly evolving from a blogging platform into an experimentation space for AI-native product systems focused on:
+
+- realtime interaction
+- streaming UX
+- latency-conscious AI orchestration
+- edge-runtime infrastructure
+- human-centered AI workflows
+  > _"The best writing tool is the one that gets out of your way — until you need it."_

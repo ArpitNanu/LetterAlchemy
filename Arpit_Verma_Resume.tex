@@ -1,0 +1,138 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.6in}
+\addtolength{\textheight}{1.2in}
+\setlength{\footskip}{4.1pt}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\raggedright\large\bfseries
+}{}{0em}{}[\titlerule \vspace{-5pt}]
+
+\newcommand{\resumeItem}[1]{
+  \item\small{#1 \vspace{-2pt}}
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+  \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    {\Huge \textbf{Arpit Verma}} \\ \vspace{1pt}
+    \small
+    +91-8871683134 $|$
+    \href{mailto:verma.arpit1212@gmail.com}{verma.arpit1212@gmail.com} $|$
+    \href{https://www.linkedin.com/in/arpit-verma-av}{linkedin.com/in/arpit-verma-av} $|$
+    \href{https://github.com/ArpitNanu}{github.com/ArpitNanu} $|$
+    \href{https://letteralchemy.pages.dev}{letteralchemy.pages.dev}
+\end{center}
+
+%-----------SUMMARY-----------
+\section{Summary}
+\small{
+Entry-level full-stack developer with a deployed writing platform built independently using React, TypeScript, Hono, Prisma, PostgreSQL, Cloudflare Workers, and Cloudflare Pages. Strong foundation in frontend development, REST APIs, authentication, database-backed features, scheduled backend jobs, AI-assisted workflows, and production deployment. Seeking junior frontend, React, or entry-level full-stack developer roles.
+}
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small{\item{
+    \textbf{Languages}{: TypeScript, JavaScript, HTML, CSS, SQL} \\
+    \textbf{Frontend}{: React, React Router, Vite, TailwindCSS, Tiptap, shadcn/ui, Axios, Figma} \\
+    \textbf{Backend}{: Hono, REST APIs, JWT Authentication, bcrypt, Zod, Cloudflare Workers} \\
+    \textbf{Database/ORM}{: PostgreSQL, Prisma, Neon} \\
+    \textbf{Tools/Deployment}{: Git, GitHub, Cloudflare Pages, Cloudflare Workers, Vercel basics, VS Code} \\
+    \textbf{Concepts}{: Protected Routes, Debouncing, Autosave, Slug Routing, API Integration, Wireframing, Responsive UI, Lazy Loading, Bundle Optimization}
+  }}
+\end{itemize}
+
+%-----------PROJECTS-----------
+\section{Projects}
+\resumeSubHeadingListStart
+
+  \resumeProjectHeading
+    {\textbf{LetterAlchemy} $|$ \emph{React, TypeScript, Hono, Prisma, PostgreSQL, Cloudflare Workers}}{2026}
+    \resumeItemListStart
+      \resumeItem{Built and deployed a Medium-style full-stack writing platform with JWT authentication, protected routes, rich-text editing, draft autosave, publishing, comments, likes, bookmarks, and dashboard analytics.}
+      \resumeItem{Designed and implemented a responsive landing page and Figma-planned product screens, including profile, focus reader, dashboard/sidebar layouts, AI prompt panels, typography, color palette, and responsive UI structure.}
+      \resumeItem{Implemented a Tiptap-based editor with debounced autosave and a complete draft-to-publish lifecycle, reducing unnecessary API calls during writing.}
+      \resumeItem{Developed a Focus Mode reader using a sliding-window word display with play/pause, WPM controls, skip navigation, keyboard shortcuts, and progress tracking.}
+      \resumeItem{Implemented route-level lazy loading and Vite manual chunk splitting for editor, reader, dashboard, React, and UI bundles to reduce initial JavaScript loaded on first visit.}
+      \resumeItem{Built REST APIs using Hono, Prisma, and PostgreSQL/Neon for authentication, posts, comments, likes, bookmarks, public feed retrieval, and user-specific dashboard metrics.}
+      \resumeItem{Added a scheduled Cloudflare Worker flow to fetch hot subreddit topics, reduce initial writing friction for users, and generate topic summaries using Gemini.}
+      \resumeItem{\textbf{Live Demo:} \href{https://letteralchemy.pages.dev}{letteralchemy.pages.dev} $|$ \textbf{Figma Design:} \href{https://www.figma.com/design/3S7Je0iAKoSUZSfBG9BrfR/LetterAlchemy?node-id=0-1}{figma.com/design/LetterAlchemy}}
+    \resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+\resumeSubHeadingListStart
+  \resumeProjectHeading
+    {\textbf{Technical Robotics Trainer Intern} $|$ \emph{School robotics training program}}{6 Months}
+    \resumeItemListStart
+      \resumeItem{Worked as an unpaid technical robotics trainer in a school program under a robotics education company.}
+      \resumeItem{Helped students understand basic robotics concepts, hands-on activities, hardware components, and beginner-friendly problem-solving workflows.}
+      \resumeItem{Supported classroom sessions by explaining technical ideas in simple language and assisting students during practical exercises.}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%-----------EDUCATION-----------
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {ITM College}{India}
+    {Bachelor of Technology in Electronics and Communication Engineering}{2020}
+\resumeSubHeadingListEnd
+
+%-----------ADDITIONAL-----------
+\section{Additional Information}
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small{\item{
+    \textbf{Target Roles}{: Junior Frontend Developer, Junior React Developer, Entry-Level Full Stack Developer, Associate Software Engineer, Software Engineer Trainee} \\
+    \textbf{Availability}{: Immediate} \\
+    \textbf{Portfolio Project}{: Deployed full-stack app with frontend, backend, database, authentication, dashboard, and user-facing product workflows}
+  }}
+\end{itemize}
+
+\end{document}
