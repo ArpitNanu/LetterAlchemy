@@ -69,9 +69,9 @@ Headline: ${title}`,
     // Clean up potential markdown formatting from the AI response
     let cleanText = result.text || "[]";
     cleanText = cleanText
-      .replace(/```json/gi, "")
-      .replace(/```/g, "")
-      .trim();
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
 
     return cleanText;
   } catch (error) {
