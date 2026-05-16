@@ -162,8 +162,8 @@ graph TD
     end
 
     %% Network Connections
-    APIClient <==>|JSON REST / Fetch| HonoIndex
-    APIClient <..>|SSE Token Streams| GeminiService
+    APIClient <-->|JSON REST / Fetch| HonoIndex
+    APIClient -.->|SSE Token Streams| GeminiService
 
     %% ==========================================
     %% DATABASE & EXTERNAL
@@ -184,8 +184,8 @@ graph TD
     end
 
     %% Service Connections
-    PrismaClient <==>|Accelerate/Pool| DB
-    GeminiService <==>|@google/genai| GeminiAPI
+    PrismaClient <-->|Accelerate/Pool| DB
+    GeminiService <-->|@google/genai| GeminiAPI
 
     %% ==========================================
     %% CRON / BACKGROUND
