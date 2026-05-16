@@ -619,5 +619,23 @@ posts.get("/bookmarks", authmiddleware, async (c) => {
   }
 });
 
+posts.get("/article/query/:id",authmiddleware, async (c) => {
+  const primsa = getPrisma(c.env);
+  const userId = Number(c.get("userId"));
+  const postId = Number(c.req.param("id"));
+  try {
+    const findPost = await primsa.post.findFirst({
+    where: { id: postId },
+  });
+  if(!findPost){  return c.json({ msg: "post not found" }, 404);}
+  else {
+  }
+  } catch (error) {
+    
+  }
+  
+  
+})
+
 export default posts;
 

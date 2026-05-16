@@ -1,5 +1,33 @@
 import { GoogleGenAI } from "@google/genai";
 
+export async function generateGeminiResponse(prompt: string, apiKey: string) {
+  const ai = new GoogleGenAI({ apiKey });
+
+  // Use the same model as summarizeHeadline for consistency
+  const model = "gemini-3.1-flash-lite-preview";
+
+  try {
+    const result = await ai.models.generateContent({
+      model,
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: prompt,
+            },
+          ],
+        },
+      ],
+    });
+
+    return result.text || "No response from AI";
+  } catch (error) {
+    console.error("Gemini Service Error (General):", error);
+    return "Error generating response";
+  }
+}
+
 export async function summarizeHeadline(title: string, apiKey: string) {
   const ai = new GoogleGenAI({ apiKey });
 

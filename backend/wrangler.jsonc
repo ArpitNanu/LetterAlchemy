@@ -17,5 +17,9 @@
   },
   "placement": {
     "hostname": "ep-falling-shadow-adrhs9i7-pooler.c-2.us-east-1.aws.neon.tech"
+  },
+  "ai": {
+    "binding": "AI"
   }
+
 }

@@ -10,4 +10,5 @@ export interface Env {
   R2_ENDPOINT: string;
   R2_BUCKET_NAME: string;
   R2_PUBLIC_URL: string;
+  AI: any; // Add this line to define the AI binding
 }
