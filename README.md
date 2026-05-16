@@ -1,6 +1,6 @@
 # LetterAlchemy ✍️
 
-> An AI-native realtime writing and reading platform built on Cloudflare’s edge stack — exploring how low-latency AI systems can feel expressive, contextual, and human rather than simply functional.
+> An AI-native realtime writing and reading platform built on Cloudflare's edge stack — exploring how low-latency AI systems can feel expressive, contextual, and human rather than simply functional.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-92%25-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![Hono](https://img.shields.io/badge/Backend-Hono%20%2B%20Cloudflare%20Workers-orange)](https://hono.dev/)
@@ -9,7 +9,7 @@
 
 ---
 
-## Live Demo
+## 🌐 Live Demo
 
 | Service  | URL                                                                              |
 | -------- | -------------------------------------------------------------------------------- |
@@ -18,7 +18,7 @@
 
 ---
 
-## What Is LetterAlchemy?
+## 📖 What Is LetterAlchemy?
 
 LetterAlchemy is a **full-stack blogging platform** where writers can draft, publish, and enhance their posts using AI-powered tools wired directly into the writing workflow.
 
@@ -26,7 +26,7 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 
 ---
 
-## Key Features
+## ✨ Key Features
 
 ### Core Platform
 
@@ -50,22 +50,23 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-| Layer      | Technology                                                       |
-| ---------- | ---------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------- |
+| Layer      | Technology                                                        |
+| ---------- | ----------------------------------------------------------------- |
 | Frontend   | React 19, TypeScript, Vite, TailwindCSS v4, shadcn/ui, Tiptap v3 |
-| Backend    | Realtime AI                                                      | SSE Streaming, TransformStreams, Parallel AI Orchestration | Hono, TypeScript, Cloudflare Workers (edge runtime) |
-| Database   | PostgreSQL (Neon serverless), Prisma ORM + Accelerate            |
-| AI         | Google Gemini API (`@google/genai`)                              |
-| Auth       | JWT (custom middleware), bcryptjs                                |
-| Validation | Zod (shared schemas across FE and BE)                            |
-| Scheduling | Cloudflare Workers Cron Triggers                                 |
-| Deployment | Frontend → Vercel · Backend → Cloudflare Workers                 |
+| Backend    | Hono, TypeScript, Cloudflare Workers (edge runtime)               |
+| Realtime   | SSE Streaming, TransformStreams, Parallel AI Orchestration         |
+| Database   | PostgreSQL (Neon serverless), Prisma ORM + Accelerate             |
+| AI         | Google Gemini API (`@google/genai`)                               |
+| Auth       | JWT (custom middleware), bcryptjs                                 |
+| Validation | Zod (shared schemas across FE and BE)                             |
+| Scheduling | Cloudflare Workers Cron Triggers                                  |
+| Deployment | Frontend → Vercel · Backend → Cloudflare Workers                  |
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -108,9 +109,7 @@ It is not a toy. Every AI feature is deliberately instrumented — prompts are v
 
 ---
 
----
-
-## Realtime AI Reader Pipeline (Experimental)
+## 🧪 Realtime AI Reader Pipeline (Experimental)
 
 LetterAlchemy now includes an experimental realtime AI reader pipeline focused on low-latency inference orchestration and progressive response delivery.
 
@@ -133,7 +132,9 @@ Current backend architecture:
 
 The goal is to explore AI UX patterns where responsiveness itself becomes part of the product experience.
 
-## Database Schema
+---
+
+## 🗄️ Database Schema
 
 ```prisma
 model user          { id, email, firstName, lastName, password, bio, socialLinks }
@@ -149,7 +150,7 @@ model aiTweet       { id, tweet, postId }
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 LetterAlchemy/
@@ -199,7 +200,7 @@ LetterAlchemy/
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -247,15 +248,15 @@ npm run dev        # starts on http://localhost:5173
 
 ---
 
-## Environment Variables
+## 🔐 Environment Variables
 
 ### Backend (`.dev.vars`)
 
-| Variable         | Description                       |
-| ---------------- | --------------------------------- |
+| Variable         | Description                      |
+| ---------------- | -------------------------------- |
 | `DATABASE_URL`   | Neon PostgreSQL connection string |
-| `JWT_SECRET`     | Secret for signing JWT tokens     |
-| `GEMINI_API_KEY` | Google Gemini API key             |
+| `JWT_SECRET`     | Secret for signing JWT tokens    |
+| `GEMINI_API_KEY` | Google Gemini API key            |
 
 ### Frontend (`.env`)
 
@@ -265,7 +266,7 @@ npm run dev        # starts on http://localhost:5173
 
 ---
 
-## AI Design Philosophy
+## 🧠 AI Design Philosophy
 
 Every AI feature in LetterAlchemy is built with the same discipline required to run AI agents in production:
 
@@ -276,7 +277,7 @@ Every AI feature in LetterAlchemy is built with the same discipline required to 
 
 ---
 
-## Planned Features (v2)
+## 🔮 Planned Features (v2)
 
 - **Blog Chat with RAG** — Each blog gets an AI chat interface. Questions answered from blog context; unanswered questions notify the author to fill the gap.
 - **A/B Prompt Testing** — Run two prompt versions in parallel, compare quality scores, promote winner.
@@ -287,7 +288,7 @@ Every AI feature in LetterAlchemy is built with the same discipline required to 
 
 ---
 
-## What I Learned Building This
+## 💡 What I Learned Building This
 
 - How to run an AI service at the edge (Cloudflare Workers) with Gemini, handling V8 heap constraints
 - How prompt versioning changes the relationship between deployment and model quality
@@ -299,21 +300,7 @@ Every AI feature in LetterAlchemy is built with the same discipline required to 
 
 ---
 
-## Contributing
-
-PRs welcome. Open an issue first for significant changes.
-
----
-
-## License
-
-MIT
-
----
-
----
-
-## Engineering Direction
+## 🧭 Engineering Direction
 
 LetterAlchemy is increasingly evolving from a blogging platform into an experimentation space for AI-native product systems focused on:
 
@@ -322,4 +309,17 @@ LetterAlchemy is increasingly evolving from a blogging platform into an experime
 - latency-conscious AI orchestration
 - edge-runtime infrastructure
 - human-centered AI workflows
-  > _"The best writing tool is the one that gets out of your way — until you need it."_
+
+> _"The best writing tool is the one that gets out of your way — until you need it."_
+
+---
+
+## 🤝 Contributing
+
+PRs welcome. Open an issue first for significant changes.
+
+---
+
+## 📄 License
+
+MIT
