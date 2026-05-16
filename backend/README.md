@@ -43,7 +43,7 @@ graph TD
     end
 
     PostService <--> |Prisma Client| Database[("🐘 PostgreSQL (Neon)")]:::db
-    AIService <--> |@google/genai| Gemini["🤖 Google Gemini API"]:::db
+    AIService <--> |google/genai| Gemini["🤖 Google Gemini API"]:::db
     
     Cron(("⏰ Cloudflare Cron")) -.-> |Scheduled Fetch| AIService
 ```

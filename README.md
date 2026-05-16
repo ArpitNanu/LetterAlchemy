@@ -184,8 +184,8 @@ graph TD
     end
 
     %% Service Connections
-    PrismaClient <-->|Accelerate/Pool| DB
-    GeminiService <-->|@google/genai| GeminiAPI
+    PrismaClient <--> |Accelerate/Pool| DB
+    GeminiService <--> |google/genai| GeminiAPI
 
     %% ==========================================
     %% CRON / BACKGROUND
