@@ -28,7 +28,7 @@ graph TD
 
     Client(("📱 Client")) --> |HTTP Requests / SSE| Router
 
-    subgraph "Cloudflare Workers Edge (Hono)":::edge
+    subgraph CloudflareEdge ["Cloudflare Workers Edge (Hono)"]
         Router["🚦 Hono Router"]:::route
         Middleware["🔐 Auth & Validation<br/>(JWT, Zod)"]:::route
         
@@ -41,6 +41,8 @@ graph TD
         Middleware --> PostService
         Middleware --> AIService
     end
+
+    class CloudflareEdge edge
 
     PostService <--> |Prisma Client| Database[("🐘 PostgreSQL (Neon)")]:::db
     AIService <--> |google/genai| Gemini["🤖 Google Gemini API"]:::db
