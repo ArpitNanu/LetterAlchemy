@@ -1,9 +1,12 @@
+console.log("PROMPT AI FILE EXECUTED");
 import { Hono } from "hono";
+
 import { Env } from "../types/env";
 import { getPrisma } from "../db/prisma";
 
 import { extractTextFromTiptap } from "../utils/extractTextFromTiptap";
 import { generateGeminiResponse } from "../services/gemini";
+
 
 
 const promptAi = new Hono<{
@@ -160,5 +163,56 @@ ${readableText}
     );
   }
 });
+
+console.log("Prompt AI route loaded");
+
+promptAi.get("/fake-stream", async (c) => {
+  const { readable, writable } = new TransformStream();
+
+  const writer = writable.getWriter();
+  const encoder = new TextEncoder();
+
+  // Background async stream task
+  c.executionCtx.waitUntil(
+    (async () => {
+      const fakeChunks = [
+        "Hello ",
+        "this ",
+        "is ",
+        "fake ",
+        "AI streaming 🚀",
+      ];
+
+      for (const chunk of fakeChunks) {
+        await writer.write(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "token",
+              text: chunk,
+            })}\n\n`
+          )
+        );
+
+        // delay between chunks
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      // stream finished
+      await writer.write(
+        encoder.encode(`data: [DONE]\n\n`)
+      );
+
+      await writer.close();
+    })()
+  );
+
+  return new Response(readable, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+    },
+  });
+});
+
 
 export default promptAi;
