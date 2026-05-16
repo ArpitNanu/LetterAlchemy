@@ -26,7 +26,7 @@ graph TD
     classDef service fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff;
     classDef db fill:#8b5cf6,stroke:#6d28d9,stroke-width:2px,color:#fff;
 
-    Client((📱 Client)) --> |HTTP Requests / SSE| Router
+    Client(("📱 Client")) --> |HTTP Requests / SSE| Router
 
     subgraph "Cloudflare Workers Edge (Hono)":::edge
         Router["🚦 Hono Router"]:::route

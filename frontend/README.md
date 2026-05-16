@@ -26,7 +26,7 @@ graph TD
     classDef api fill:#f59e0b,stroke:#b45309,stroke-width:2px,color:#fff;
     classDef external fill:#64748b,stroke:#334155,stroke-width:2px,color:#fff;
 
-    User((👤 User)) --> |Interacts| Pages
+    User(("👤 User")) --> |Interacts| Pages
 
     subgraph "React Frontend Application"
         Pages["📄 UI Pages<br/>(Home, Dashboard, Editor)"]:::ui

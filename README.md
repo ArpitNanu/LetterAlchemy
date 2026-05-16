@@ -80,23 +80,23 @@ graph TD
     classDef ai fill:#059669,stroke:#047857,stroke-width:2px,color:#fff;
 
     %% 👤 USER
-    User((👤 Writer / Reader)):::user
+    User(("👤 Writer / Reader")):::user
 
     %% ==========================================
     %% FRONTEND Architecture (Vite + React 19)
     %% ==========================================
     subgraph Frontend["💻 React Frontend Application"]
-        Router[🚦 React Router & App.tsx]:::reactLogic
-        AuthCtx[🔐 AuthContext & ProtectedRoute]:::reactLogic
+        Router["🚦 React Router & App.tsx"]:::reactLogic
+        AuthCtx["🔐 AuthContext & ProtectedRoute"]:::reactLogic
         
         %% Pages
         subgraph Pages["📄 UI Pages"]
-            Home[🏠 HomePage / LandingPage]:::reactUI
-            AuthPages[🔑 LoginPage / SignupPage]:::reactUI
-            Dashboard[📊 DashboardPage]:::reactUI
-            Profile[👤 ProfilePage]:::reactUI
-            Editor[📝 EditorPage & Tiptap Components]:::reactUI
-            Reader[📖 ReaderPage / PostPage]:::reactUI
+            Home["🏠 HomePage / LandingPage"]:::reactUI
+            AuthPages["🔑 LoginPage / SignupPage"]:::reactUI
+            Dashboard["📊 DashboardPage"]:::reactUI
+            Profile["👤 ProfilePage"]:::reactUI
+            Editor["📝 EditorPage & Tiptap Components"]:::reactUI
+            Reader["📖 ReaderPage / PostPage"]:::reactUI
         end
         
         Router --> AuthPages
@@ -110,13 +110,13 @@ graph TD
         
         %% Editor Sub-components
         subgraph EditorInternals["Editor Architecture"]
-            Tiptap[EditorMain / MenuBar]:::reactUI
-            AutoSave[⏱️ Debounced Auto-Save Hook]:::reactLogic
+            Tiptap["EditorMain / MenuBar"]:::reactUI
+            AutoSave["⏱️ Debounced Auto-Save Hook"]:::reactLogic
             Editor --> Tiptap
             Tiptap --> AutoSave
         end
         
-        APIClient[🔌 postApi.ts / api fetchers]:::reactLogic
+        APIClient["🔌 postApi.ts / api fetchers"]:::reactLogic
         AutoSave --> APIClient
         Dashboard --> APIClient
         Reader --> APIClient
@@ -129,16 +129,16 @@ graph TD
     %% BACKEND Architecture (Cloudflare Workers)
     %% ==========================================
     subgraph Backend["⚡ Cloudflare Edge Backend (Hono)"]
-        HonoIndex[🚀 index.ts Router]:::honoRouter
-        Middleware[🛡️ auth.middleware.ts<br/>(JWT Verification)]:::honoLogic
+        HonoIndex["🚀 index.ts Router"]:::honoRouter
+        Middleware["🛡️ auth.middleware.ts<br/>(JWT Verification)"]:::honoLogic
         
         %% Route Handlers
         subgraph Routes["🛣️ API Route Controllers"]
-            AuthRoute[🔑 auth.ts<br/>/signup, /login]:::honoLogic
-            UserRoute[👤 users.ts<br/>/profile]:::honoLogic
-            PostRoute[📝 posts.ts<br/>/posts CRUD]:::honoLogic
-            CommentRoute[💬 comment.ts<br/>/comments]:::honoLogic
-            AIRoute[🧠 promptAi.ts<br/>/ai/improve]:::honoLogic
+            AuthRoute["🔑 auth.ts<br/>/signup, /login"]:::honoLogic
+            UserRoute["👤 users.ts<br/>/profile"]:::honoLogic
+            PostRoute["📝 posts.ts<br/>/posts CRUD"]:::honoLogic
+            CommentRoute["💬 comment.ts<br/>/comments"]:::honoLogic
+            AIRoute["🧠 promptAi.ts<br/>/ai/improve"]:::honoLogic
         end
         
         HonoIndex --> AuthRoute
@@ -150,8 +150,8 @@ graph TD
         Middleware --> AIRoute
         
         %% Services
-        GeminiService[🤖 gemini.ts Service Wrapper<br/>SSE & Streams]:::honoLogic
-        PrismaClient[🔗 db/prisma.ts<br/>ORM Client]:::honoLogic
+        GeminiService["🤖 gemini.ts Service Wrapper<br/>SSE & Streams"]:::honoLogic
+        PrismaClient["🔗 db/prisma.ts<br/>ORM Client"]:::honoLogic
         
         AIRoute --> GeminiService
         
@@ -169,15 +169,15 @@ graph TD
     %% DATABASE & EXTERNAL
     %% ==========================================
     subgraph External["🌍 External Services & DB"]
-        DB[(🐘 Neon Postgres DB)]:::db
-        GeminiAPI[🧠 Google Gemini AI Models]:::ai
+        DB[("🐘 Neon Postgres DB")]:::db
+        GeminiAPI["🧠 Google Gemini AI Models"]:::ai
         
         subgraph Tables["Schema Tables"]
-            schemaUser[user]:::db
-            schemaPost[post]:::db
-            schemaComment[comment]:::db
-            schemaLike[like]:::db
-            schemaNews[newsHeadline]:::db
+            schemaUser["user"]:::db
+            schemaPost["post"]:::db
+            schemaComment["comment"]:::db
+            schemaLike["like"]:::db
+            schemaNews["newsHeadline"]:::db
         end
         
         DB --- Tables
@@ -191,8 +191,8 @@ graph TD
     %% CRON / BACKGROUND
     %% ==========================================
     subgraph Background["⏰ Edge Cron Triggers"]
-        CronHandler[🔄 index.ts Cron Handler]:::honoLogic
-        RedditAPI[🌐 Reddit API]:::user
+        CronHandler["🔄 index.ts Cron Handler"]:::honoLogic
+        RedditAPI["🌐 Reddit API"]:::user
         
         CronHandler -->|1. Fetch Hot Posts| RedditAPI
         CronHandler -->|2. Summarize| GeminiService
